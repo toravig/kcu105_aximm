@@ -1,0 +1,149 @@
+{
+   Display-PortTypeClock: "true",
+   Display-PortTypeOthers: "true",
+   Display-PortTypeReset: "true",
+   DisplayMarkDebug: "0",
+   comment_0: "   USER
+REGISTERS",
+   comment_1: "RESET",
+   comment_2: "MIG",
+   comment_3: " AXI PERF
+MONITOR",
+   comment_4: "PCIe",
+   comment_5: "Expresso
+   DMA",
+   comment_6: "SYSMON",
+   comment_7: "PCIe PERF
+MONITOR",
+   comment_8: "AXI IC 
+FABRIC",
+   comment_9: "Kintex UltraScale AXI Memory Mapped Base Design",
+   commentid: "comment_0|comment_1|comment_2|comment_3|comment_4|comment_5|comment_6|comment_7|comment_8|comment_9|",
+   font_comment_0: "36",
+   font_comment_1: "36",
+   font_comment_2: "36",
+   font_comment_3: "36",
+   font_comment_4: "36",
+   font_comment_5: "44",
+   font_comment_6: "44",
+   font_comment_7: "36",
+   font_comment_8: "36",
+   font_comment_9: "72",
+   guistr: "# # String gsaved with Nlview 6.4.7  2014-07-30 bk=1.3165 VDI=35 GEI=35 GUI=JA:1.8
+#  -string -flagsOSRD
+preplace port sys_reset -pg 1 -y 720 -defaultsOSRD
+preplace port pmbus_data -pg 1 -y 1130 -defaultsOSRD
+preplace port vauxp2 -pg 1 -y 1190 -defaultsOSRD
+preplace port pmbus_control -pg 1 -y 1150 -defaultsOSRD
+preplace port vauxn0 -pg 1 -y 1170 -defaultsOSRD
+preplace port sys_rst -pg 1 -y 320 -defaultsOSRD
+preplace port pmbus_clk -pg 1 -y 1110 -defaultsOSRD
+preplace port vauxn2 -pg 1 -y 1210 -defaultsOSRD
+preplace port user_clk -pg 1 -y 300 -defaultsOSRD
+preplace port sys_clk -pg 1 -y 680 -defaultsOSRD
+preplace port C0_DDR4 -pg 1 -y 470 -defaultsOSRD
+preplace port vauxp8 -pg 1 -y 1230 -defaultsOSRD
+preplace port c0_init_calib_complete -pg 1 -y 350 -defaultsOSRD
+preplace port pcie3_ext_pipe_interface -pg 1 -y 590 -defaultsOSRD
+preplace port C0_SYS_CLK -pg 1 -y 360 -defaultsOSRD
+preplace port sys_clk_gt -pg 1 -y 700 -defaultsOSRD
+preplace port vauxn8 -pg 1 -y 1250 -defaultsOSRD
+preplace port user_lnk_up -pg 1 -y 640 -defaultsOSRD
+preplace port vauxp0 -pg 1 -y 1150 -defaultsOSRD
+preplace port pmbus_alert -pg 1 -y 1100 -defaultsOSRD
+preplace port clk125_in -pg 1 -y 1120 -defaultsOSRD
+preplace port pcie_7x_mgt -pg 1 -y 490 -defaultsOSRD
+preplace portBus cfg_current_speed -pg 1 -y 550 -defaultsOSRD
+preplace portBus muxaddr_out -pg 1 -y 1190 -defaultsOSRD
+preplace portBus cfg_negotiated_width -pg 1 -y 570 -defaultsOSRD
+preplace inst nwl_dma_x8g3_wrapper_0 -pg 1 -lvl 3 -y 710 -defaultsOSRD -resize 334 220
+preplace inst pvtmon_axi_slave_0 -pg 1 -lvl 3 -y 1150 -defaultsOSRD -resize 341 200
+preplace inst pcie_monitor_gen3_0 -pg 1 -lvl 2 -y 120 -defaultsOSRD -resize 322 210
+preplace inst pcie3_ultrascale_0 -pg 1 -lvl 1 -y 620 -defaultsOSRD
+preplace inst mig_0 -pg 1 -lvl 6 -y 510 -defaultsOSRD
+preplace inst proc_sys_reset_0 -pg 1 -lvl 2 -y 910 -defaultsOSRD
+preplace inst AXI_IC_FABRIC -pg 1 -lvl 5 -y 540 -defaultsOSRD -resize 309 184
+preplace inst user_axilite_control_0 -pg 1 -lvl 3 -y 140 -defaultsOSRD -resize 406 184
+preplace inst axi_perf_mon_0 -pg 1 -lvl 4 -y 190 -defaultsOSRD -resize 280 266
+preplace netloc mig_0_C0_DDR4 1 6 1 N
+preplace netloc sys_rst_1 1 0 6 NJ 370 NJ 370 NJ 370 NJ 370 NJ 370 3010
+preplace netloc pmbus_alert_1 1 0 3 NJ 1100 NJ 1100 1160
+preplace netloc pcie3_ultrascale_0_user_reset 1 1 2 570 740 NJ
+preplace netloc pcie3_ultrascale_0_cfg_negotiated_width 1 1 6 640 540 NJ 540 NJ 680 NJ 680 NJ 680 NJ
+preplace netloc C0_SYS_CLK_1 1 0 6 NJ 360 NJ 360 NJ 360 NJ 360 NJ 360 3040
+preplace netloc vauxp8_1 1 0 3 NJ 1230 NJ 1230 1190
+preplace netloc vauxn8_1 1 0 3 NJ 1250 NJ 1250 1210
+preplace netloc user_axilite_control_0_clk_period 1 1 3 700 250 NJ 20 1770
+preplace netloc pvtmon_axi_slave_0_muxaddr_out 1 3 4 N 1190 NJ 1190 NJ 1190 NJ
+preplace netloc pcie_monitor_gen3_0_rx_byte_count 1 2 1 1140
+preplace netloc pcie3_ultrascale_0_pcie_7x_mgt 1 1 6 620 520 NJ 520 NJ 660 NJ 660 NJ 660 NJ
+preplace netloc user_axilite_control_0_scaling_factor 1 1 3 710 290 NJ 290 1770
+preplace netloc pcie3_ultrascale_0_cfg_current_speed 1 1 6 630 530 NJ 530 NJ 670 NJ 670 NJ 670 NJ
+preplace netloc mig_0_c0_init_calib_complete 1 2 5 1210 300 1880 590 2520 650 3030 420 3560
+preplace netloc pcie3_ultrascale_0_pcie_cfg_fc 1 1 1 580
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_control 1 0 4 190 800 NJ 690 NJ 580 1750
+preplace netloc axi_interconnect_3_M02_AXI 1 3 3 1850 20 NJ 20 2980
+preplace netloc vauxn0_1 1 0 3 NJ 1170 NJ 1170 1170
+preplace netloc sys_reset_1 1 0 1 180
+preplace netloc sys_clk_1 1 0 1 150
+preplace netloc nwl_dma_x8g3_wrapper_0_m 1 3 2 1850 710 2530
+preplace netloc pcie_monitor_gen3_0_tx_byte_count 1 2 1 1150
+preplace netloc pcie3_ultrascale_0_user_lnk_up 1 1 6 600 670 NJ 560 NJ 700 NJ 700 NJ 700 NJ
+preplace netloc nwl_dma_x8g3_wrapper_0_s_axis_cc 1 0 4 150 270 620 270 NJ 270 1760
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_msi 1 0 4 190 440 NJ 510 NJ 510 1770
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_interrupt 1 0 4 140 420 NJ 490 NJ 490 1800
+preplace netloc axi_interconnect_3_M01_AXI 1 2 4 1210 1030 NJ 1030 NJ 1030 2970
+preplace netloc clk125_in_1 1 0 3 NJ 1120 NJ 1120 1130
+preplace netloc pcie3_ultrascale_0_pcie3_cfg_status 1 1 2 580 720 NJ
+preplace netloc nwl_dma_x8g3_wrapper_0_cfg_mgmt 1 0 4 170 410 NJ 480 NJ 480 1790
+preplace netloc pvtmon_axi_slave_0_pmbus_control 1 3 4 N 1150 NJ 1150 NJ 1150 NJ
+preplace netloc proc_sys_reset_0_peripheral_reset 1 1 2 690 1000 1140
+preplace netloc pcie3_ultrascale_0_pcie3_ext_pipe_interface 1 1 6 670 550 NJ 550 NJ 690 NJ 690 NJ 690 NJ
+preplace netloc pcie3_ultrascale_0_m_axis_rc 1 1 2 610 710 NJ
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_msix 1 0 4 180 430 NJ 500 NJ 500 1780
+preplace netloc vauxn2_1 1 0 3 NJ 1210 NJ 1210 1170
+preplace netloc pcie3_ultrascale_0_user_clk 1 1 6 590 730 1190 260 1780 40 2520 300 NJ 300 NJ
+preplace netloc mig_0_c0_ddr4_ui_clk 1 3 4 1890 430 2540 430 NJ 600 3560
+preplace netloc Net1 1 3 4 N 1130 NJ 1130 NJ 1130 NJ
+preplace netloc Net 1 3 4 N 1110 NJ 1110 NJ 1110 NJ
+preplace netloc pcie3_ultrascale_0_m_axis_cq 1 1 2 650 700 NJ
+preplace netloc nwl_dma_x8g3_wrapper_0_s_axis_rq 1 0 4 160 350 680 680 NJ 570 1740
+preplace netloc axi_interconnect_3_M00_AXI 1 2 4 1150 30 NJ 10 NJ 10 2990
+preplace netloc axi_interconnect_2_M00_AXI 1 3 3 1870 30 NJ 30 3020
+preplace netloc vauxp2_1 1 0 3 NJ 1190 NJ 1190 1140
+preplace netloc sys_clk_gt_1 1 0 1 170
+preplace netloc pcie_monitor_gen3_0_init_fc 1 2 1 N
+preplace netloc vauxp0_1 1 0 3 NJ 1150 NJ 1150 N
+preplace netloc pcie_dma_wrapper_x8g3_0_user_lnk_up 1 2 3 1200 280 1870 570 NJ
+preplace cgraphic comment_0 place abs 1395 96 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_1 place abs 877 888 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_2 place abs 3359 486 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_3 place abs 2258 131 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_4 place abs 313 551 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_5 place abs 1385 650 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_6 place abs 1399 1122 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_7 place abs 831 78 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_8 place abs 2698 488 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_9 place abs 869 -160 textcolor 6 linecolor 3 linewidth 0
+levelinfo -pg 1 120 380 940 1510 2360 2790 3400 3630
+",
+   linktoobj_comment_0: "/user_axilite_control_0",
+   linktoobj_comment_1: "/proc_sys_reset_0",
+   linktoobj_comment_2: "/mig_0",
+   linktoobj_comment_3: "/axi_perf_mon_0",
+   linktoobj_comment_4: "/pcie3_ultrascale_0",
+   linktoobj_comment_5: "/nwl_dma_x8g3_wrapper_0",
+   linktoobj_comment_6: "/pvtmon_axi_slave_0",
+   linktoobj_comment_7: "/pcie_monitor_gen3_0",
+   linktoobj_comment_8: "/AXI_IC_FABRIC",
+   linktotype_comment_0: "bd_cell",
+   linktotype_comment_1: "bd_cell",
+   linktotype_comment_2: "bd_cell",
+   linktotype_comment_3: "bd_cell",
+   linktotype_comment_4: "bd_cell",
+   linktotype_comment_5: "bd_cell",
+   linktotype_comment_6: "bd_cell",
+   linktotype_comment_7: "bd_cell",
+   linktotype_comment_8: "bd_cell",
+   textcolor_comment_9: "#008000",
+}

@@ -1,0 +1,179 @@
+{
+   Display-PortTypeClock: "true",
+   Display-PortTypeOthers: "true",
+   Display-PortTypeReset: "true",
+   DisplayMarkDebug: "0",
+   comment_0: "   VIDEO
+PROCESSING",
+   comment_1: "AXI IC BLOCKS",
+   comment_10: "Expresso
+   DMA",
+   comment_11: "PCIe",
+   comment_2: "Kintex UltraScale AXI Memory Mapped Video Accelerator Reference Design",
+   comment_3: "MIG ",
+   comment_4: "SYSMON",
+   comment_6: "RESET",
+   comment_7: "    USER 
+REGISTERS",
+   comment_8: "AXI PERF 
+MONITOR",
+   comment_9: "PCIe PERF
+MONITOR",
+   commentid: "comment_0|comment_1|comment_3|comment_4|comment_6|comment_7|comment_8|comment_9|comment_10|comment_11|comment_2|",
+   fillcolor_comment_0: "",
+   fillcolor_comment_10: "",
+   fillcolor_comment_2: "",
+   fillcolor_comment_4: "",
+   fillcolor_comment_7: "",
+   font_comment_0: "45",
+   font_comment_1: "45",
+   font_comment_10: "54",
+   font_comment_11: "39",
+   font_comment_2: "121",
+   font_comment_3: "42",
+   font_comment_4: "42",
+   font_comment_6: "39",
+   font_comment_7: "46",
+   font_comment_8: "42",
+   font_comment_9: "46",
+   guistr: "# # String gsaved with Nlview 6.4.7  2014-07-30 bk=1.3165 VDI=35 GEI=35 GUI=JA:1.8
+#  -string -flagsOSRD
+preplace port sys_reset -pg 1 -y 1020 -defaultsOSRD
+preplace port pmbus_data -pg 1 -y 1320 -defaultsOSRD
+preplace port vauxp2 -pg 1 -y 1360 -defaultsOSRD
+preplace port pmbus_control -pg 1 -y 1340 -defaultsOSRD
+preplace port vauxn0 -pg 1 -y 1340 -defaultsOSRD
+preplace port sys_rst -pg 1 -y 1120 -defaultsOSRD
+preplace port pmbus_clk -pg 1 -y 1300 -defaultsOSRD
+preplace port vauxn2 -pg 1 -y 1400 -defaultsOSRD
+preplace port sys_clk -pg 1 -y 980 -defaultsOSRD
+preplace port user_clk -pg 1 -y 1010 -defaultsOSRD
+preplace port C0_DDR4 -pg 1 -y 970 -defaultsOSRD
+preplace port vauxp8 -pg 1 -y 1420 -defaultsOSRD
+preplace port c0_init_calib_complete -pg 1 -y 460 -defaultsOSRD
+preplace port pcie3_ext_pipe_interface -pg 1 -y 930 -defaultsOSRD
+preplace port C0_SYS_CLK -pg 1 -y 930 -defaultsOSRD
+preplace port sys_clk_gt -pg 1 -y 1000 -defaultsOSRD
+preplace port vauxn8 -pg 1 -y 1440 -defaultsOSRD
+preplace port user_lnk_up -pg 1 -y 1280 -defaultsOSRD
+preplace port vauxp0 -pg 1 -y 1320 -defaultsOSRD
+preplace port pmbus_alert -pg 1 -y 1280 -defaultsOSRD
+preplace port clk125_in -pg 1 -y 1300 -defaultsOSRD
+preplace port pcie_7x_mgt -pg 1 -y 910 -defaultsOSRD
+preplace portBus cfg_current_speed -pg 1 -y 950 -defaultsOSRD
+preplace portBus muxaddr_out -pg 1 -y 1360 -defaultsOSRD
+preplace portBus cfg_negotiated_width -pg 1 -y 990 -defaultsOSRD
+preplace inst nwl_dma_x8g3_wrapper_0 -pg 1 -lvl 3 -y 1030 -defaultsOSRD -resize 579 212
+preplace inst pvtmon_axi_slave_0 -pg 1 -lvl 5 -y 1430 -defaultsOSRD -resize 451 220
+preplace inst pcie_monitor_gen3_0 -pg 1 -lvl 2 -y 350 -defaultsOSRD -resize 484 290
+preplace inst pcie3_ultrascale_0 -pg 1 -lvl 1 -y 930 -defaultsOSRD
+preplace inst mig_0 -pg 1 -lvl 5 -y 840 -defaultsOSRD -resize 372 198
+preplace inst proc_sys_reset_0 -pg 1 -lvl 1 -y 1260 -defaultsOSRD
+preplace inst VIDEO_PATH -pg 1 -lvl 7 -y 830 -defaultsOSRD -resize 549 280
+preplace inst AXI_IC_BLOCKS -pg 1 -lvl 4 -y 1110 -defaultsOSRD -resize 578 314
+preplace inst user_axilite_control_0 -pg 1 -lvl 6 -y 360 -defaultsOSRD -resize 571 206
+preplace inst axi_perf_mon_0 -pg 1 -lvl 4 -y 170 -defaultsOSRD -resize 521 320
+preplace netloc mig_0_C0_DDR4 1 5 3 4010 980 NJ 980 NJ
+preplace netloc sys_rst_1 1 0 5 NJ 680 NJ 780 NJ 780 NJ 780 3180
+preplace netloc pmbus_alert_1 1 0 5 NJ 1350 NJ 1350 NJ 1350 NJ 1350 3170
+preplace netloc pcie3_ultrascale_0_user_reset 1 1 2 NJ 1170 1390
+preplace netloc pcie3_ultrascale_0_cfg_negotiated_width 1 1 7 NJ 1050 NJ 840 NJ 840 NJ 1030 NJ 1030 NJ 1030 5980
+preplace netloc C0_SYS_CLK_1 1 0 5 NJ 670 NJ 670 NJ 670 NJ 670 3190
+preplace netloc vauxp8_1 1 0 5 NJ 1420 NJ 1420 NJ 1420 NJ 1420 3080
+preplace netloc vauxn8_1 1 0 5 NJ 1440 NJ 1440 NJ 1440 NJ 1440 3060
+preplace netloc user_axilite_control_0_clk_period 1 1 6 740 520 NJ 520 NJ 520 NJ 520 NJ 240 4720
+preplace netloc pvtmon_axi_slave_0_muxaddr_out 1 5 3 NJ 1470 NJ 1470 5970
+preplace netloc pcie_monitor_gen3_0_rx_byte_count 1 2 4 NJ 400 NJ 400 NJ 400 4030
+preplace netloc pcie3_ultrascale_0_pcie_7x_mgt 1 1 7 700 1020 NJ 820 NJ 820 NJ 1010 NJ 1010 NJ 1010 NJ
+preplace netloc axi_interconnect_3_M03_AXI 1 4 3 NJ 1150 NJ 1150 4790
+preplace netloc user_axilite_control_0_scaling_factor 1 1 6 750 530 NJ 530 NJ 530 NJ 530 NJ 530 4720
+preplace netloc pcie3_ultrascale_0_cfg_current_speed 1 1 7 640 1040 NJ 830 NJ 830 NJ 1020 NJ 1020 NJ 1020 NJ
+preplace netloc mig_0_c0_init_calib_complete 1 3 5 2200 1300 3100 960 4050 990 4730 460 NJ
+preplace netloc pcie3_ultrascale_0_pcie_cfg_fc 1 1 1 610
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_control 1 0 4 200 1140 NJ 1190 NJ 870 2100
+preplace netloc axi_vdma_0_M_AXI_MM2S 1 3 5 2230 920 NJ 1070 NJ 1070 NJ 1070 5910
+preplace netloc axi_interconnect_3_M02_AXI 1 3 2 2190 1280 3060
+preplace netloc vauxn0_1 1 0 5 NJ 1380 NJ 1380 NJ 1380 NJ 1380 3110
+preplace netloc sys_reset_1 1 0 1 N
+preplace netloc nwl_dma_x8g3_wrapper_0_int_dma 1 3 4 NJ 910 NJ 1060 NJ 1060 4800
+preplace netloc user_axilite_control_0_spad_reg 1 6 1 4770
+preplace netloc sys_clk_1 1 0 1 N
+preplace netloc nwl_dma_x8g3_wrapper_0_m 1 3 1 2150
+preplace netloc pcie_monitor_gen3_0_tx_byte_count 1 2 4 NJ 350 NJ 360 NJ 360 3990
+preplace netloc pcie3_ultrascale_0_user_lnk_up 1 0 8 200 1170 580 1320 NJ 1320 NJ 1320 NJ 1280 NJ 1280 NJ 1280 NJ
+preplace netloc nwl_dma_x8g3_wrapper_0_s_axis_cc 1 0 4 160 690 660 1200 NJ 890 2090
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_msi 1 0 4 190 720 NJ 800 NJ 800 2140
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_interrupt 1 0 4 190 1130 NJ 1180 NJ 860 2130
+preplace netloc axi_interconnect_3_M01_AXI 1 4 1 3080
+preplace netloc clk125_in_1 1 0 5 NJ 1360 NJ 1360 NJ 1360 NJ 1360 3150
+preplace netloc pcie3_ultrascale_0_pcie3_cfg_status 1 1 2 NJ 1030 N
+preplace netloc nwl_dma_x8g3_wrapper_0_cfg_mgmt 1 0 4 180 710 NJ 790 NJ 790 2120
+preplace netloc pvtmon_axi_slave_0_pmbus_control 1 5 3 NJ 1430 NJ 1430 5920
+preplace netloc mig_0_addn_ui_clkout1 1 3 4 2220 810 NJ 970 3980 1000 4810
+preplace netloc VIDEO_PATH_M00_AXI 1 2 6 1410 880 NJ 880 NJ 1050 NJ 1050 NJ 1050 5920
+preplace netloc proc_sys_reset_0_peripheral_reset 1 1 1 690
+preplace netloc pcie3_ultrascale_0_pcie3_ext_pipe_interface 1 1 7 NJ 1060 NJ 850 NJ 850 NJ 1040 NJ 1040 NJ 1040 5960
+preplace netloc pcie3_ultrascale_0_m_axis_rc 1 1 2 710 1010 N
+preplace netloc nwl_dma_x8g3_wrapper_0_pcie3_cfg_msix 1 0 4 200 730 NJ 810 NJ 810 2110
+preplace netloc axi_interconnect_3_M04_AXI 1 4 3 NJ 1160 NJ 1160 4780
+preplace netloc vauxn2_1 1 0 5 NJ 1400 NJ 1400 NJ 1400 NJ 1400 3090
+preplace netloc user_axilite_control_0_spad_val 1 6 1 4760
+preplace netloc pcie3_ultrascale_0_user_clk 1 0 8 190 1160 680 1160 1410 1160 2160 1290 3180 1290 4020 930 4740 670 NJ
+preplace netloc mig_0_c0_ddr4_ui_clk 1 3 3 2210 660 NJ 660 3980
+preplace netloc Net1 1 5 3 4060 1320 NJ 1320 NJ
+preplace netloc Net 1 5 3 4050 1300 NJ 1300 NJ
+preplace netloc pcie3_ultrascale_0_m_axis_cq 1 1 2 730 990 N
+preplace netloc nwl_dma_x8g3_wrapper_0_s_axis_rq 1 0 4 170 700 670 1210 NJ 900 2080
+preplace netloc axi_vdma_0_M_AXI_S2MM 1 3 5 2240 930 NJ 1080 NJ 1080 NJ 1080 5900
+preplace netloc axi_interconnect_3_M00_AXI 1 4 2 NJ 1140 4000
+preplace netloc axi_interconnect_2_M00_AXI 1 3 2 2240 770 3080
+preplace netloc vauxp2_1 1 0 5 NJ 1390 NJ 1390 NJ 1390 NJ 1390 3100
+preplace netloc sys_clk_gt_1 1 0 1 N
+preplace netloc pcie_monitor_gen3_0_init_fc 1 2 4 NJ 300 NJ 350 NJ 350 3990
+preplace netloc vauxp0_1 1 0 5 NJ 1370 NJ 1370 NJ 1370 NJ 1370 3130
+preplace netloc pcie_dma_wrapper_x8g3_0_user_lnk_up 1 1 6 NJ 1280 1420 1220 2170 1310 3190 1300 4040 860 NJ
+preplace cgraphic comment_0 place abs 5453 771 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_1 place abs 2557 1043 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_3 place abs 3666 823 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_4 place abs 3610 1397 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_6 place abs 320 1224 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_7 place abs 4267 313 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_8 place abs 2628 123 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_9 place abs 892 295 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_10 place abs 1586 951 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_11 place abs 321 910 textcolor 4 linecolor 3 linewidth 2
+preplace cgraphic comment_2 place abs 642 -366 textcolor 6 linecolor 3 linewidth 3
+levelinfo -pg 1 120 390 1050 1770 2749 3730 4410 5600 6000
+",
+   linecolor_comment_0: "",
+   linecolor_comment_10: "",
+   linecolor_comment_2: "",
+   linecolor_comment_4: "",
+   linecolor_comment_7: "",
+   linktoobj_comment_0: "/VIDEO_PATH",
+   linktoobj_comment_1: "/AXI_IC_BLOCKS",
+   linktoobj_comment_10: "/nwl_dma_x8g3_wrapper_0",
+   linktoobj_comment_11: "/pcie3_ultrascale_0",
+   linktoobj_comment_3: "/mig_0",
+   linktoobj_comment_4: "/pvtmon_axi_slave_0",
+   linktoobj_comment_6: "/proc_sys_reset_0",
+   linktoobj_comment_7: "/user_axilite_control_0",
+   linktoobj_comment_8: "/axi_perf_mon_0",
+   linktoobj_comment_9: "/pcie_monitor_gen3_0",
+   linktotype_comment_0: "bd_cell",
+   linktotype_comment_1: "bd_cell",
+   linktotype_comment_10: "bd_cell",
+   linktotype_comment_11: "bd_cell",
+   linktotype_comment_3: "bd_cell",
+   linktotype_comment_4: "bd_cell",
+   linktotype_comment_6: "bd_cell",
+   linktotype_comment_7: "bd_cell",
+   linktotype_comment_8: "bd_cell",
+   linktotype_comment_9: "bd_cell",
+   textcolor_comment_0: "",
+   textcolor_comment_10: "",
+   textcolor_comment_2: "#008000",
+   textcolor_comment_4: "",
+   textcolor_comment_7: "",
+}
+0
