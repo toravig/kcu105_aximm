@@ -623,13 +623,14 @@ static long xdma_dev_ioctl(struct file * filp,
         break;
 	case IGET_LED_STATISTICS:
 #ifdef ETH_APP
-        Status_Reg = XIo_In32(base + 0x00001418);
+        Status_Reg = XIo_In32(base +USER_BASE + 0x418);
 
-	lstats.Phy0 = (Status_Reg && 0x000000FF) & 0x1; /* 30th bit 'on' of Status Register indicated Phy 0 link up */
+	lstats.Phy0 = (Status_Reg && 0x000000FF) & 0x1;  /* 30th bit 'on' of Status Register indicated Phy 0 link up */
 	lstats.Phy1 = (Status_Reg && 0x0000FF00) & 0x1;  /* 31st bit 'on' of Status Register indicated Phy 1 link up */
 #endif
 #ifdef DDR_DESIGN
-	lstats.DdrCalib0 = 0x1;/* 1st bit 'on' of Status Register indicated DDR3 Calibration done*/
+        Status_Reg = XIo_In32(base + USER_BASE + 0x4);	
+	lstats.DdrCalib0 = (Status_Reg) & 0x1 ; /* 1st bit 'on' of Status Register indicated DDR3 Calibration done*/
 #endif 
         if(copy_to_user((LedStats *)arg, &lstats, sizeof(LedStats)))
         {

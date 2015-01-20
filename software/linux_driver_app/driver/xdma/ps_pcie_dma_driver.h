@@ -21,7 +21,7 @@
 #ifdef HW_SGL_DESIGN
 #define MAX_RW_AXI_MM 	0x22
 #endif
-#ifdef DDR_DESIGN
+#if defined(DDR_DESIGN) || defined (PFORM_USCALE_NO_EP_PROCESSOR)
 #define MAX_RW_AXI_MM 	0x33
 #endif 
 #define FC_COMP_HEADER_DATA 0x806003E0
