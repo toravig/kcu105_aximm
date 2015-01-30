@@ -21,10 +21,10 @@
                                  V4L2_BUF_FLAG_PREPARED | V4L2_BUF_FLAG_TIMECODE)
 #define CHUNK_SIZE 614400
 #define GRABBER_BUF_SIZE FRAME_PIXEL_ROWS * FRAME_PIXEL_COLS * NUM_BYTES_PIXEL
-#define LINE_BUF_SIZE 7680
-#define MAX_WIDTH 1920
+#define LINE_BUF_SIZE (FRAME_PIXEL_COLS * NUM_BYTES_PIXEL)
+#define MAX_WIDTH FRAME_PIXEL_COLS
 //#define MAX_HEIGHT 1200
-#define MAX_HEIGHT 1080
+#define MAX_HEIGHT FRAME_PIXEL_ROWS
 #define NUM_INPUTS 1
 #define BUF_COUNT 3
 #define MAX_QUEUE_SIZE 3
@@ -261,7 +261,7 @@ int dma_setup_receive_image(int index)
     grabber_buffer = &dev->priv.buf[index];
     pos = &grabber_buffer->list;
     get_dma_lock();
-    for (i=0;i<1080;i++){
+    for (i=0;i<MAX_HEIGHT;i++){
         if ((pos_in_buf + LINE_BUF_SIZE) > CHUNK_SIZE) {
             pos = pos->next;
             grabber_buffer = list_entry (pos,frame_grabber_buffer, list);
@@ -380,7 +380,11 @@ static int vidioc_enum_framesizes(struct file *file, void *fh,
 {
 	static const struct v4l2_frmsize_stepwise sizes = {
 		48, MAX_WIDTH, 4,
+#ifdef RES_720P
+		720, MAX_HEIGHT, 1
+#else
 		1080, MAX_HEIGHT, 1
+#endif
 	};
 	int i;
 

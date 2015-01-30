@@ -178,7 +178,7 @@
 #define LOOPBACK            0x00000002	/* Enable TX data loopback onto RX */
 #endif
 
-#if ENABLE_DEBUG
+#ifdef ENABLE_DEBUG
     #define LOG_MSG printk
 #else
     #define LOG_MSG(...)
@@ -374,8 +374,13 @@ spinlock_t TxAuxLock;
 spinlock_t RxAuxLock;
 #endif
 
+#ifdef RES_720P
+#define H_SIZE             1280
+#define V_SIZE             720 
+#else
 #define H_SIZE             1920
 #define V_SIZE             1080
+#endif
 
 #define VDMA_OFFSET        0x00020000
 #define SOBEL_OFFSET       0x00030000
@@ -406,15 +411,27 @@ spinlock_t RxAuxLock;
 #define MM2S_VDMACR_RUN_VAL    0x00000000
 #define S2MM_VDMACR_RUN_VAL    0x00000000
 #define S2MM_VDMACR_VAL        0x00010003   // RS=1; all others are default value, with genLock
+#ifdef RES_720P
+#define S2MM_FRMDLY_STRIDE_VAL 0x00001400   //H_SIZE*4      //0x0000_1400   // Frame delay is set to zero + Stride is equal to Hsize = (1280*4)  => 0x1400
+#define S2MM_HSIZE_VAL         0x00001400   //H_SIZE*4       //0x0000_1400   // (1280*4)  => 0x1400
+#define S2MM_VSIZE_VAL         0x000002D0 //V_SIZE       //0x0000_02D0   // 720 lines => 0x000002D0
+#else
 #define S2MM_FRMDLY_STRIDE_VAL 0x00001E00   //H_SIZE*4      //0x0000_2000   // Frame delay is set to zero + Stride is equal to Hsize = (1920*4)  => 0x1E00
 #define S2MM_HSIZE_VAL         0x00001E00   //H_SIZE*4       //0x0000_1E00   // (1920*4)  => 0x1E00
 #define S2MM_VSIZE_VAL         0x00000438 //V_SIZE       //0x0000_0438   // 1080 lines => 0x00000438
+#endif
 
 //#define MM2S_VDMACR_VAL        0x000170C3   // RS=1; all others are default value
 #define MM2S_VDMACR_VAL        0x00010003   // RS=1; all others are default value
+#ifdef RES_720P
+#define MM2S_FRMDLY_STRIDE_VAL  0x00001400  //H_SIZE*4       //0x0000_2000   // Frame delay is set to zero + Stride is equal to Hsize
+#define MM2S_HSIZE_VAL          0x00001400  //H_SIZE*4  //0x0000_1E00;  // (1280pixel * 4Bytes)  => 0x1400
+#define MM2S_VSIZE_VAL          0x000002D0  //V_SIZE  //0x0000_02D0;  // 720 lines => 0x02D0
+#else
 #define MM2S_FRMDLY_STRIDE_VAL 0x00001E00  //H_SIZE*4       //0x0000_2000   // Frame delay is set to zero + Stride is equal to Hsize
 #define MM2S_HSIZE_VAL         0X00001E00  //H_SIZE*4  //0x0000_1E00;  // (1920pixel * 4Bytes)  => 5120 => 0x1E00
 #define MM2S_VSIZE_VAL         0X00000438  //V_SIZE  //0x0000_0438;  // 1080 lines => 0x0438
+#endif
 
 #define SOBEL_CNTL_STS_REG     0x00000000
 #define SOBEL_NO_OF_ROWS       0x00000014
