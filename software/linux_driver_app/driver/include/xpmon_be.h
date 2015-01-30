@@ -256,8 +256,13 @@ extern "C" {
 
 #define TX_CONFIG_SEQNO 512  /**< Sequence number wrap around */
 
+#ifdef RES_720P
+#define FRAME_PIXEL_ROWS    720
+#define FRAME_PIXEL_COLS    1280
+#else
 #define FRAME_PIXEL_ROWS    1080
 #define FRAME_PIXEL_COLS    1920
+#endif
 #define NUM_BYTES_PIXEL     4
 #define NUM_PARLEL_BUFFS    3
 #define NUM_BLANK_FRAMES    4
