@@ -6,5 +6,5 @@ int receive_packet(char * buffer, size_t length);
 int DmaSetupReceive(const char __user * buffer,size_t length);
 int rx_done_poll (int expect_count);
 long xraw_dev_ioctl (struct file *filp,
-                     unsigned int cmd, unsigned long arg);
+		unsigned int cmd, unsigned long arg);
 #endif /* XIL_FB_H */
