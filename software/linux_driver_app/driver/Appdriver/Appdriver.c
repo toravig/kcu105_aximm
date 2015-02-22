@@ -1455,7 +1455,7 @@ int host_pump_driver_init(void)
 
 	/* First allocate a major/minor number. */
 	chrRet = alloc_chrdev_region (&xrawDev, 0, 1, DEV_NAME);
-	if (IS_ERR ((int *) chrRet))
+	if (chrRet < 0)
 	{
 		printk(KERN_ERR "Error allocating char device region\n");
 		return -1;

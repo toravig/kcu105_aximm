@@ -89,11 +89,9 @@
 #include <linux/kthread.h>
 
 #include "../include/xpmon_be.h"
-#if 1
 #include "../include/xdma_user.h"
 #include "../include/xdebug.h"
 #include "../include/xio.h"
-#endif
 
 #include "xil_v4l2.h"
 
@@ -250,20 +248,9 @@ ps_pcie_dma_desc_t* ptr_dma_desc;
 //#define PS_DDR_VDMA_TX_ADDR_BASE (0x00010000)
 //#define PS_DDR_VDMA_RX_ADDR_BASE (PS_DDR_VDMA_TX_ADDR_BASE + (NUM_FRAMES_IN_PLDDR * VIDEO_FRAME_SIZE))
 // Working offsets
-#if 1
 #define PS_DDR_VDMA_TX_ADDR_BASE (0xC0000000)
 //#define PS_DDR_VDMA_RX_ADDR_BASE (0xD0000000)
 #define PS_DDR_VDMA_RX_ADDR_BASE (PS_DDR_VDMA_TX_ADDR_BASE + (NUM_FRAMES_IN_PLDDR * VIDEO_FRAME_SIZE))
-#endif
-#if 0
-#define PS_DDR_VDMA_TX_ADDR_BASE0 (0xD0000000)
-#define PS_DDR_VDMA_TX_ADDR_BASE1 (0xD1000000)
-#define PS_DDR_VDMA_TX_ADDR_BASE2 (0xD2000000)
-
-#define PS_DDR_VDMA_RX_ADDR_BASE0 (0xE0000000)
-#define PS_DDR_VDMA_RX_ADDR_BASE1 (0xE1000000)
-#define PS_DDR_VDMA_RX_ADDR_BASE2 (0xE2000000)
-#endif
 
 struct task_struct* task = NULL;
 
@@ -367,12 +354,6 @@ spinlock_t TxLock;
 spinlock_t RxLock;
 
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
-#if 0
-/* For synchronization between Tx Aux and Tx Aux call back */
-spinlock_t TxAuxLock;
-/* For synchronization between Rx Aux and Rx Aux call back */
-spinlock_t RxAuxLock;
-#endif
 
 #ifdef RES_720P
 #define H_SIZE             1280
@@ -638,21 +619,6 @@ unsigned int ErrCnt = 0;
 	static inline void
 PrintSummary (void)
 {
-#if 0
-	u32 val;
-	LOG_MSG ("---------------------------------------------------\n");
-	LOG_MSG ("%s Driver results Summary:-\n", MYNAME);
-	LOG_MSG ("Current Run Min Packet Size = %d, Max Packet Size = %d\n",
-			RawMinPktSize, RawMaxPktSize);
-	LOG_MSG
-		("Buffers Transmitted = %u, Buffers Received = %u, Error Count = %u\n",
-		 TxBufCnt, RxBufCnt, ErrCnt);
-
-
-	val = XIo_In32 (TXbarbase + STATUS_ADDRESS);
-	LOG_MSG ("Data Mismatch Status = %x\n", val);
-	LOG_MSG ("---------------------------------------------------\n");
-#endif
 
 }
 
@@ -729,14 +695,6 @@ myInit (u64 barbase, unsigned int privdata)
 				return -1;
 			}
 
-#if 0
-			/* Check handle value */
-			if (hndl != handle[2])
-			{
-				log_normal ("Came with wrong handle %x\n", (u32) hndl);
-				return -1;
-			}
-#endif
 
 			for (i = 0; i < numpkts; i++)
 			{
@@ -762,13 +720,6 @@ myInit (u64 barbase, unsigned int privdata)
 					tempBuffInfo.endAddress= pbuf->bufInfo;
 					tempBuffInfo.endSize=pbuf->size;
 					tusrLength = (pbuf->userInfo & 0x0000ffff);
-#if 0
-					if(tusrLength != pktSize)
-					{
-						LOG_MSG(KERN_ERR "XXXX Size mismatch in XRAW0 pktSize = %d tusrLength = %d XXXX\n",
-								pktSize,tusrLength);
-					}
-#endif
 					/* put the packet in driver queue*/
 					putBuffInfo (&RxDoneQ, tempBuffInfo);
 					pktSize = 0;
@@ -851,11 +802,6 @@ myInit (u64 barbase, unsigned int privdata)
 			unsigned char *usrAddr = NULL;
 			BufferInfo tempBuffInfo;
 
-#if 0
-			log_verbose (KERN_INFO
-					"Reached myPutTxPkt with handle %p, numpkts %d, privdata %x\n",
-					hndl, numpkts, privdata);
-#endif
 
 			/* Check driver state */
 			if (xraw_DriverState != REGISTERED)
@@ -864,14 +810,6 @@ myInit (u64 barbase, unsigned int privdata)
 				return -1;
 			}
 			//    LOG_MSG(KERN_ERR"At myPutTxPkt numpkts are %d\n",numpkts);
-#if 0
-			/* Check handle value */
-			if (hndl != handle[0])
-			{
-				LOG_MSG ("Came with wrong handle\n");
-				return -1;
-			}
-#endif
 			/* Just check if we are on the way out */
 			// spin_lock_bh(&RawLock);
 			for (i = 0; i < numpkts; i++)
@@ -879,11 +817,9 @@ myInit (u64 barbase, unsigned int privdata)
 				flags = vaddr->flags;
 
 				pbuf = vaddr;
-#if 1
 				if(pbuf->bufPa)
 					dma_unmap_page(ptr_chan_s2c[VIDEO_TX_CHANNEL_ID]->ptr_dma_desc->dev,pbuf->bufPa,\
 							pbuf->size,DMA_TO_DEVICE);
-#endif
 				if(pbuf->pageAddr)
 					page_cache_release( (struct page *)pbuf->pageAddr);
 
@@ -1096,11 +1032,6 @@ myInit (u64 barbase, unsigned int privdata)
 					log_verbose("========Reg %x = %d\n",DESIGN_MODE_ADDRESS, PERF_DESIGN_MODE);
 					XIo_Out32 (TXbarbase + DESIGN_MODE_ADDRESS,PERF_DESIGN_MODE);
 					log_verbose("DESIGN MODE %d\n",PERF_DESIGN_MODE );
-#if 0
-					log_verbose("========Reg %x = %d\n", PKT_SIZE_ADDRESS, val);
-					XIo_Out32 (TXbarbase + PKT_SIZE_ADDRESS, val);
-					log_verbose("RxPktSize %d\n", val);
-#endif
 					seqno= TX_CONFIG_SEQNO;
 					log_verbose("========Reg %x = %d\n",SEQNO_WRAP_REG, seqno);
 					XIo_Out32 (TXbarbase + SEQNO_WRAP_REG , seqno);
@@ -1127,11 +1058,9 @@ myInit (u64 barbase, unsigned int privdata)
 					val = XIo_In32 (TXbarbase + HOST_STATUS_OFFSET);
 					mdelay(10);
 					log_verbose(KERN_ERR"Obtained val %x at HOST_STATUS_OFFSET will be setting TEST START soon\n",val);
-#if 1
 					val = val | ZYNQ_TEST_START_MASK; 
 					mdelay(10);
 					XIo_Out32 (TXbarbase +HOST_STATUS_OFFSET,val);
-#endif
 #endif
 				}
 				/* Else, stop the test. Do not remove any loopback here because
@@ -1414,101 +1343,6 @@ Returns: 0 for success / -1 for failure
 		LOG_MSG(KERN_ERR"SOBEL_INVERT_REG=%x\n",XIo_In32(bar2_addr + SOBEL_OFFSET + SOBEL_INVERT_REG));
 	}
 
-#if 0
-	int aux_datapump_function(void *data)
-	{
-		dma_addr_t paddr_buf;
-		unsigned short uid = 1;
-		int retval;
-		int state;
-
-		while (!kthread_should_stop())
-		{
-			if(tx_aux_channel_num_empty_bds)
-			{
-
-				paddr_buf = (dma_addr_t)TxDstDdrPhyAdrs;
-				LOCK_DMA_CHANNEL(&ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->channel_lock);
-				retval = xlnx_data_frag_io(ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID],(unsigned char *)paddr_buf,addr_typ_aux_transfer[VIDEO_TX_CHANNEL_ID],\
-						MAXPKTSIZE,cbk_transfer_video_dst_row ,uid, true, NULL);
-
-				if(retval < XLNX_SUCCESS) 
-				{
-					state = ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->chann_state;
-
-					//spin_unlock_irqrestore(&chann->channel_lock, flags);
-#ifdef PUMP_APP_DBG_PRNT
-					LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
-#endif
-					if(state == eLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
-					{
-#ifdef PUMP_APP_DBG_PRNT
-						LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
-#endif
-						//ptr_chan_s2c_0->chann_state = XLNX_DMA_CHANN_NO_ERR;
-						//	set_task_state(current, TASK_INTERRUPTIBLE);  
-						UNLOCK_DMA_CHANNEL(&ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->channel_lock);
-					}
-
-				}
-				else
-				{
-					TxDstDdrPhyAdrs += MAXPKTSIZE;
-					if(TxDstDdrPhyAdrs >= psDstQsRangeTx[NUM_FRAMES_IN_PLDDR - 1].frame_end_address)
-						TxDstDdrPhyAdrs = psDstQsRangeTx[NUM_FRAMES_IN_PLDDR - 1].frame_start_address;
-
-
-					tx_aux_channel_num_empty_bds--;
-					UNLOCK_DMA_CHANNEL(&ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->channel_lock);
-
-				}
-			}
-#if 0
-			if(rx_aux_channel_num_empty_bds)
-			{
-
-				paddr_buf = (dma_addr_t)RxDstDdrPhyAdrs;
-				LOCK_DMA_CHANNEL(&ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->channel_lock);
-				retval = xlnx_data_frag_io(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID],(unsigned char *)paddr_buf,addr_typ_aux_transfer[VIDEO_RX_CHANNEL_ID],\
-						MAXPKTSIZE,cbk_receive_video_dst ,uid, true, NULL);
-
-				if(retval < XLNX_SUCCESS) 
-				{
-					state = ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->chann_state;
-
-					//spin_unlock_irqrestore(&chann->channel_lock, flags);
-#ifdef PUMP_APP_DBG_PRNT
-					LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
-#endif
-					if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
-					{
-#ifdef PUMP_APP_DBG_PRNT
-						LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
-#endif
-						//ptr_chan_s2c_0->chann_state = XLNX_DMA_CHANN_NO_ERR;
-						//	set_task_state(current, TASK_INTERRUPTIBLE);  
-						UNLOCK_DMA_CHANNEL(&ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->channel_lock);
-					}
-
-				}
-				else
-				{
-					RxDstDdrPhyAdrs += MAXPKTSIZE;
-					if(RxDstDdrPhyAdrs >= psDstQsRangeRx[NUM_FRAMES_IN_PLDDR - 1].frame_end_address)
-						RxDstDdrPhyAdrs = psDstQsRangeRx[NUM_FRAMES_IN_PLDDR - 1].frame_start_address;
-
-					rx_aux_channel_num_empty_bds--;
-
-					UNLOCK_DMA_CHANNEL(&ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->channel_lock);
-
-				}
-			}
-#endif
-			msleep (10);
-		} 
-		return 0;
-	}
-#endif
 
 	static void c2s_processed_fr_tsmt (struct work_struct *work)
 	{
@@ -1540,12 +1374,12 @@ Returns: 0 for success / -1 for failure
 			state = ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->chann_state;
 
 #ifdef PUMP_APP_DBG_PRNT
-			LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
+			LOG_MSG(KERN_ERR"\nFailed::::::Buffer allocated transmit %d\n", retval);
 #endif
 			if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED)
 			{
 #ifdef PUMP_APP_DBG_PRNT
-				LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
+				LOG_MSG(KERN_ERR"\n- Context Q saturated %d\n",state);
 #endif
 				ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->chann_state = XLNX_DMA_CHANN_NO_ERR;
 				//      set_task_state(current, TASK_INTERRUPTIBLE);
@@ -1576,12 +1410,12 @@ Returns: 0 for success / -1 for failure
 				state = ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->chann_state;
 
 #ifdef PUMP_APP_DBG_PRNT
-				LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
+				LOG_MSG(KERN_ERR"\n- Failed::::::Buffer allocated transmit %d\n", retval);
 #endif
 				if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED)
 				{
 #ifdef PUMP_APP_DBG_PRNT
-					LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
+					LOG_MSG(KERN_ERR"\n- Context Q saturated %d\n",state);
 #endif
 					ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->chann_state = XLNX_DMA_CHANN_NO_ERR;
 					//      set_task_state(current, TASK_INTERRUPTIBLE);
@@ -1630,29 +1464,10 @@ Returns: 0 for success / -1 for failure
 		unsigned short uid = 1;
 		int retval;
 		dma_addr_t paddr_buf;
-#if 0
-		struct page *cachePages[3];  
-		PktBuf *pkts[3];
-		PktBuf buf[3];
-#endif
 		struct page** cachePages;  
 		PktBuf *pbuf;
 		PktBuf **pkts;
 
-#if 0
-		/* Check driver state */
-		if(xraw_DriverState != REGISTERED)
-		{
-			LOG_MSG("Driver does not seem to be ready\n");
-			return 0;
-		}
-		/* Check handle value */
-		if(hndl != handle[0])
-		{
-			LOG_MSG("Came with wrong handle\n");
-			return 0;
-		}
-#endif
 		total = 0;
 		result = 0;
 
@@ -1740,10 +1555,6 @@ Returns: 0 for success / -1 for failure
 						pbuf->pageOffset, pbuf->size, DMA_TO_DEVICE);
 				pbuf->bufPa = paddr_buf;
 				LOCK_DMA_CHANNEL(&ptr_chan_s2c[VIDEO_TX_CHANNEL_ID]->channel_lock);
-#if 0
-				if(last_frag == true)
-					LOG_MSG(KERN_ERR "Transferring %d fragment of data through frag_io with ptr_ctx = %p and physical_address = %p\n",j+1,ptr_ctx,paddr_buf);
-#endif
 				retval = xlnx_data_frag_io(ptr_chan_s2c[VIDEO_TX_CHANNEL_ID],(unsigned char *)paddr_buf ,addr_typ_transfer[VIDEO_TX_CHANNEL_ID],\
 						pbuf->size ,cbk_transfer_video_row ,uid, last_frag, ptr_ctx);
 
@@ -1753,12 +1564,12 @@ Returns: 0 for success / -1 for failure
 
 					//spin_unlock_irqrestore(&chann->channel_lock, flags);
 #ifdef PUMP_APP_DBG_PRNT
-					LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
+					LOG_MSG(KERN_ERR"\n- Failed::::::Buffer allocated transmit %d\n", retval);
 #endif
 					if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 					{
 #ifdef PUMP_APP_DBG_PRNT
-						LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
+						LOG_MSG(KERN_ERR"\n- Context Q saturated %d\n",state);
 #endif
 						ptr_chan_s2c[VIDEO_TX_CHANNEL_ID]->chann_state = XLNX_DMA_CHANN_NO_ERR;
 						//	set_task_state(current, TASK_INTERRUPTIBLE);  
@@ -1833,12 +1644,10 @@ Returns: 0 for success / -1 for failure
 				putBuffInfo (&TxDoneQ, tempBuffInfo);
 			}
 		}
-#if 1  
 		for(i=0; i<num_frags; i++) {
 			kfree(pkts[i]);
 		}
 		kfree(pkts);
-#endif
 
 	}
 
@@ -1847,14 +1656,10 @@ Returns: 0 for success / -1 for failure
 	void cbk_transfer_video_dst_row(struct _ps_pcie_dma_chann_desc *ptr_chann, void *data, unsigned int compl_bytes,\
 			unsigned short uid, unsigned int num_frags)
 	{
-#if 1
 		dma_addr_t paddr_buf;
 		int retval;
 		int state;
 		static int flag = 0;
-#if 0
-		static int count = 0;
-#endif
 
 
 		//LOG_MSG(KERN_ERR"*TxDst %d\n",++count);
@@ -1865,14 +1670,11 @@ Returns: 0 for success / -1 for failure
 			if(xraw_DriverState != UNREGISTERED)			
 				queue_work(rx_dst_workq, &(rx_dst_work));
 #else
-#if 1
 			//LOG_MSG(KERN_ERR"Generating FSYNC\n");
 			XIo_Out32(ptr_dma_desc->dma_reg_virt_base_addr + DMA_AXI_INTR_ASSRT_REG_OFFSET,0x08);
 			//LOG_MSG(KERN_ERR"VDMA INTr register @(0x74) : %x \n", XIo_In32(ptr_dma_desc->dma_reg_virt_base_addr + DMA_AXI_INTR_ASSRT_REG_OFFSET));
-#endif
 			if(flag<1)
 			{
-#if 1
 				LOG_MSG("MM2S_VDMACR @(0x00) : %x \n", XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + VDMA_OFFSET + MM2S_VDMACR));
 				LOG_MSG("MM2S_FRMDLY @(0x58) : %x \n", XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + VDMA_OFFSET + MM2S_FRMDLY_STRIDE));
 				LOG_MSG("MM2S_HSIZE  @(0x54) : %x \n", XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + VDMA_OFFSET + MM2S_HSIZE));
@@ -1888,7 +1690,6 @@ Returns: 0 for success / -1 for failure
 				LOG_MSG("S2MM_ADDR1  @(0xAC) : %x \n", XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + VDMA_OFFSET + S2MM_START_ADDR1));
 				LOG_MSG("S2MM_ADDR2  @(0xB0) : %x \n", XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + VDMA_OFFSET + S2MM_START_ADDR2));
 				LOG_MSG("S2MM_ADDR3  @(0xB4) : %x \n", XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + VDMA_OFFSET + S2MM_START_ADDR3));
-#endif
 				flag++;
 			}
 # if 0
@@ -1908,12 +1709,12 @@ Returns: 0 for success / -1 for failure
 			state = ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->chann_state;
 
 #ifdef PUMP_APP_DBG_PRNT
-			LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
+			LOG_MSG(KERN_ERR"\n- Failed::::::Buffer allocated transmit %d\n", retval);
 #endif
 			if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 			{
 #ifdef PUMP_APP_DBG_PRNT
-				LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
+				LOG_MSG(KERN_ERR"\n- Context Q saturated %d\n",state);
 #endif
 				ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->chann_state = XLNX_DMA_CHANN_NO_ERR;
 				//	set_task_state(current, TASK_INTERRUPTIBLE);  
@@ -1925,12 +1726,6 @@ Returns: 0 for success / -1 for failure
 			// LOG_MSG(KERN_ERR"Programmed %p for Tx Aux Queue in the callback with data as %p.\n",paddr_buf,data);
 
 		}
-#endif
-#if 0
-		//	 spin_lock(&TxAuxLock);
-		tx_aux_channel_num_empty_bds += num_frags;
-		//	 spin_unlock(&TxAuxLock);
-#endif
 	}
 #endif
 
@@ -1946,9 +1741,6 @@ Returns: 0 for success / -1 for failure
 		unsigned char *usrAddr = NULL;
 		int noPages=0;
 
-#if 0
-		static char flag = 0;
-#endif
 
 		//  LOG_MSG(KERN_ERR"Received %d Callback with data = %p , num_frags = %d and compl_bytes = %d\n",++count,data,num_frags,compl_bytes);
 		//  LOG_MSG(KERN_ERR"#Rx%d\n",++count);
@@ -1958,7 +1750,6 @@ Returns: 0 for success / -1 for failure
 			rx_channel_num_empty_bds += num_frags;
 			return;
 		}
-#if 1  
 		//  spin_lock(&RxLock);
 		rx_channel_num_empty_bds += num_frags;
 		//  spin_unlock(&RxLock);
@@ -1995,28 +1786,16 @@ Returns: 0 for success / -1 for failure
 				putBuffInfo (&RxDoneQ, tempBuffInfo);
 			}
 		}
-#if 0 
-		if(flag == 0)
-		{
-			LOG_MSG(KERN_ERR"\nFirst row received \n");
-			for(i=0;i<NUM_BYTES_PIXEL * FRAME_PIXEL_COLS;i++)
-				LOG_MSG(KERN_ERR" %d byte = %X\n", i+1 ,(int)*((int *)(tempBuffInfo.bufferAddress) + i));
-		}
-#endif
 		for(i=0; i<num_frags; i++) {
 			kfree(pkts[i]);
 		}
 		kfree(pkts);
-#endif 
 	}
 
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
 	void cbk_receive_video_dst(struct _ps_pcie_dma_chann_desc *ptr_chann, void *data, unsigned int compl_bytes,\
 			unsigned short uid, unsigned int num_frags)
 	{
-#if 0
-		static int count = 0;
-#endif
 
 #ifdef TX_RX_SYNC
 		if(uid == RX_FRAME_SYNC_SIGNATURE)
@@ -2024,20 +1803,9 @@ Returns: 0 for success / -1 for failure
 
 			//       LOG_MSG(KERN_ERR"Setting pushback status to Progress");
 
-#if 1
 			spin_lock(&sync_lock);
 			s2c_pushback_status = PROGRESS; 
 			spin_unlock(&sync_lock);
-#endif
-#if 0
-			if(s2c_frame_cnt > 0)
-			{
-				spin_lock(&sync_lock);
-				s2c_frame_cnt --; 
-				spin_unlock(&sync_lock);
-				LOG_MSG(KERN_ERR "Decremented frame count to %d as we have received a video frame\n",s2c_frame_cnt);
-			}
-#endif
 		}
 #endif
 		//LOG_MSG(KERN_ERR"#Rxdst%d\n",++count);
@@ -2168,9 +1936,6 @@ Returns: 0 for success / -1 for failure
 
 	int receive_packet(char * buffer, size_t length, int line)
 	{
-#if 0
-		static int packetcount=0;
-#endif
 		int j;
 		int total;
 		PktBuf * pbuf;
@@ -2187,13 +1952,6 @@ Returns: 0 for success / -1 for failure
 		unsigned short uid = 0;
 		int retval;
 		int state;
-#if 0
-		/* Check driver state */
-		if(xraw_DriverState != REGISTERED) {
-			LOG_MSG("Driver does not seem to be ready\n");
-			return 0;
-		}
-#endif
 		total = 0;
 
 		/****************************************************************/
@@ -2278,14 +2036,6 @@ Returns: 0 for success / -1 for failure
 						pbuf->pageOffset, pbuf->size, DMA_FROM_DEVICE);
 				pbuf->bufPa = paddr_buf;
 				LOCK_DMA_CHANNEL(&ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID]->channel_lock);
-#if 0
-				if(ptr_ctx != NULL)
-				{
-					LOG_MSG(KERN_ERR "C2S free buffers Transferring %d \
-							fragment of data through frag_io with ptr_ctx = %p\
-							and physical_address = %p\n",j+1,ptr_ctx,paddr_buf);
-				}
-#endif
 				retval = xlnx_data_frag_io(ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID],(unsigned char *)paddr_buf,addr_typ_transfer[VIDEO_RX_CHANNEL_ID],\
 						pbuf->size ,cbk_receive_video ,uid, last_frag, ptr_ctx);
 
@@ -2295,12 +2045,12 @@ Returns: 0 for success / -1 for failure
 
 					//spin_unlock_irqrestore(&chann->channel_lock, flags);
 #ifdef PUMP_APP_DBG_PRNT
-					LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
+					LOG_MSG(KERN_ERR"\n- Failed::::::Buffer allocated transmit %d\n", retval);
 #endif
 					if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 					{
 #ifdef PUMP_APP_DBG_PRNT
-						LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
+						LOG_MSG(KERN_ERR"\n- Context Q saturated %d\n",state);
 #endif
 						ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID]->chann_state = XLNX_DMA_CHANN_NO_ERR;
 						//	set_task_state(current, TASK_INTERRUPTIBLE);  
@@ -2323,36 +2073,13 @@ Returns: 0 for success / -1 for failure
 		/****************************************************************/
 
 		allocPages = j;           // actually used pages
-#if 0
-		result = DmaSendPages(handle[2], pkts, allocPages);
-		if(result == -1)
-		{
-			for(j=0; j<allocPages; j++) {
-				page_cache_release(cachePages[j]);
-			}
-			total = 0;
-		}
-#endif
 		kfree(cachePages);
-#if 0
-		for(j=0; j<allocPages; j++) {
-			kfree(pkts[j]);
-		}
-		kfree(pkts);
-#endif
 		return allocPages;
 	}
 
-#if 0
-	static int CPU_LOADED[16] =
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-#endif
 	static int
 		xil_fb_open (struct fb_info *info, int user)
 		{
-#if 0
-			int cpu_id = 0;
-#endif
 			fb_data_0.pos = 0;
 			LOG_MSG (KERN_ERR"Trying to open device\n");
 
@@ -2361,20 +2088,6 @@ Returns: 0 for success / -1 for failure
 				LOG_MSG (KERN_ERR"Driver not yet ready!\n");
 				return -1;
 			}
-#if 0
-			cpu_id = get_cpu ();
-			if (CPU_LOADED[cpu_id] == 0)
-			{
-				CPU_LOADED[cpu_id] = 1;
-			}
-			else
-			{
-				LOG_MSG (KERN_ERR "CPU %d is already loaded, exit this process\n",
-						cpu_id);
-				//return -1;
-			}
-			LOG_MSG (KERN_ERR "$$$$$$ CPU ID %d $$$$$$\n", cpu_id);
-#endif
 
 			//  if (xraw_UserOpen)
 			//    {                                          /* To prevent more than one GUI */
@@ -2393,9 +2106,6 @@ Returns: 0 for success / -1 for failure
 	static int
 		xil_fb_release (struct fb_info *info, int user)
 		{
-#if 0
-			int cpu_id = 0;
-#endif
 			LOG_MSG(KERN_ERR"Closing device\n");
 			if (!xraw_UserOpen)
 			{
@@ -2407,11 +2117,6 @@ Returns: 0 for success / -1 for failure
 			//  spin_lock_bh(&DmaStatsLock);
 			xraw_UserOpen--;
 			//  spin_unlock_bh(&DmaStatsLock);
-#if 0
-			cpu_id = get_cpu ();
-			CPU_LOADED[cpu_id] = 0;
-			LOG_MSG (KERN_ERR "CPU %d is released\n", cpu_id);
-#endif
 
 			return 0;
 		}
@@ -2786,32 +2491,9 @@ Returns: 0 for success / -1 for failure
 			struct list_head *pos_d;
 
 			BufferInfo buff;
-#if 0  
-			int j;
-			int total, result;
-			int offset;                
-			unsigned int allocPages;   
-			unsigned long first, last; 
-			struct page** cachePages;  
-			PktBuf *buf;
-			PktBuf **pkts;
-			PktBuf ***fragList;
-			char *buffer;
-			size_t length = NUM_BYTES_PIXEL * FRAME_PIXEL_COLS;
-
-			total = 0;
-			result = 0;
-#endif
 #ifdef TX_RX_SYNC
-#if 1
 			if(s2c_pushback_status == BLOCK)
 			{
-#if 0
-				while(s2c_pushback_status != PROGRESS)
-				{
-					mdelay(1);
-				}
-#endif
 				mdelay(MAX_TIMEOUT);
 			}
 			else if(s2c_pushback_status == INITIALIZATION)
@@ -2825,39 +2507,6 @@ Returns: 0 for success / -1 for failure
 				spin_unlock(&sync_lock);
 			}
 #endif
-#if 0
-			if(s2c_frame_cnt == NUM_FRAMES_IN_PLDDR)
-			{
-				for(i=0;i<MAX_TIMEOUT;i++)
-				{
-					if(s2c_frame_cnt == NUM_FRAMES_IN_PLDDR)
-					{
-						LOG_MSG(KERN_ERR "Delaying S2C transfers as already %d frames have been transferred\n",s2c_frame_cnt);
-						mdelay(1);
-					}
-					else
-					{
-						LOG_MSG(KERN_ERR "Coming out of delay as s2c_frame_cnt = %d\n",s2c_frame_cnt);
-						break;
-					}
-				}
-				if(i == MAX_TIMEOUT)
-				{
-					LOG_MSG(KERN_ERR "Even after waiting for %d ms no recv frames have come\n",MAX_TIMEOUT);
-				}
-			}
-			if(s2c_frame_cnt < NUM_FRAMES_IN_PLDDR)
-			{
-				spin_lock(&sync_lock);
-				s2c_frame_cnt ++; 
-				spin_unlock(&sync_lock);
-			}
-			else if(s2c_frame_cnt == NUM_FRAMES_IN_PLDDR)
-			{
-				LOG_MSG(KERN_ERR "After delay transmitting the frames without incrementing frame count\n");
-			}
-#endif
-#endif
 
 			if ((RawTestMode & TEST_START) &&
 					(RawTestMode & (ENABLE_PKTCHK | ENABLE_LOOPBACK))) {
@@ -2868,16 +2517,6 @@ Returns: 0 for success / -1 for failure
 						} else {
 							free_buffers++;
 						} } }
-#if 0
-				fragList = (PktBuf ***)kmalloc(FRAME_PIXEL_ROWS * (sizeof(PktBuf*)), GFP_ATOMIC);
-
-				if(fragList == NULL)
-				{
-					LOG_MSG(KERN_ERR "Error: unable to allocate memory for fragList\n");
-					return -1;
-				}
-
-#endif
 
 				// /* Find position in the framebuffer for yoffset */
 
@@ -2936,92 +2575,17 @@ Returns: 0 for success / -1 for failure
 						fb_d = list_entry(pos_d, FrameBuffer, list);
 						pos_in_fb = 0;
 					}
-#if 1
 					if( flag < 1 )
 					{
-#if 1
 						reg_val = XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + SOBEL_OFFSET + SOBEL_CNTL_STS_REG);
 						reg_val |= 0x1;
 						XIo_Out32(ptr_dma_desc->cntrl_func_virt_base_addr + SOBEL_OFFSET + SOBEL_CNTL_STS_REG,reg_val);
 						reg_val = XIo_In32(ptr_dma_desc->cntrl_func_virt_base_addr + SOBEL_OFFSET + SOBEL_CNTL_STS_REG);
 						LOG_MSG(KERN_ERR"Enabled Sobel filter value = %x\n",reg_val);
-#endif
 						flag++;
 					}
-#endif
 					transfer_pixel_row(handle[0], fb_d->buffer + pos_in_fb, NUM_BYTES_PIXEL * FRAME_PIXEL_COLS, frame_delim, frame_sync);
 				}
-#if 0
-				/****************************************************************/
-				// SECTION 1: generate CACHE PAGES for USER BUFFER
-				//
-
-				buffer = fb_d->buffer + pos_in_fb;
-				offset = offset_in_page(buffer);
-				first = ((unsigned long)buffer & PAGE_MASK) >> PAGE_SHIFT;
-				last  = (((unsigned long)buffer + length-1) & PAGE_MASK) >> PAGE_SHIFT;
-				allocPages = (last-first)+1;
-
-				pkts = kmalloc( allocPages * (sizeof(PktBuf*)), GFP_ATOMIC);
-				if(pkts == NULL)
-				{
-					LOG_MSG(KERN_ERR "Error: unable to allocate memory for packets\n");
-					kfree(fragList);
-					return -1;
-				}
-				cachePages = kmalloc( (allocPages * (sizeof(struct page*))), GFP_ATOMIC );
-				if( cachePages == NULL )
-				{
-					LOG_MSG(KERN_ERR "Error: unable to allocate memory for cachePages\n");
-					kfree(fragList);
-					kfree(pkts);
-					return -1;
-				}
-
-				for (j=0; j<allocPages; j++) {
-
-					buf = (PktBuf *) kmalloc( (sizeof(PktBuf)), GFP_ATOMIC);
-					if(buf == NULL)
-					{
-						LOG_MSG(KERN_ERR "Error: unable to allocate memory for paket buffer\n");
-						kfree(fragList);
-						kfree(pkts);
-						kfree(cachePages);
-					}
-
-					pkts[j] = buf;
-					cachePages[j] = virt_to_page(buffer + (j * PAGE_SIZE));
-					page_cache_get(cachePages[j]);
-					if (0 == j) {
-						buf->size = (PAGE_SIZE - offset);
-					} else {
-						if (j == (allocPages -1)) {
-							buf->size = length - total; //TODO total
-						} else {
-							buf->size = (PAGE_SIZE);
-						}
-					}
-					buf->pktBuf = (unsigned char*)cachePages[j];
-					buf->pageOffset = (j == 0) ? offset : 0;
-					buf->bufInfo = (unsigned char *) buffer + total;
-					buf->pageAddr= (unsigned char*)cachePages[j];
-					buf->userInfo = length;
-					buf->flags = PKT_ALL;
-					if(i == 0)
-					{
-						buf->flags |= PKT_SOP;
-						if(frame_delimiter)
-							buf->userInfo |= (1<<FRAME_DELITER_BIT);
-					}
-					if(i == (FRAME_PIXEL_ROWS - 1) )
-					{
-						buf->flags |= PKT_EOP;
-					}
-					total += buf->size;
-				}
-				fragList[i] = pkts;
-			}
-#endif
 		}
 	release_dma_lock();
 	return ret_pack;
@@ -3615,72 +3179,6 @@ rawdata_init (void)
 
 
 	xraw_DriverState = INITIALIZED;
-#if 0
-	/* Register with DMA incase not already done so */
-	if (xraw_DriverState < POLLING)
-	{
-		spin_lock_bh (&RawLock);
-		LOG_MSG ("Calling DmaRegister on engine %d and %d\n",
-				ENGINE_TX, ENGINE_RX);
-		xraw_DriverState = REGISTERED;
-
-		ufuncs.UserInit = myInit;
-		ufuncs.UserPutPkt = myPutTxPkt;
-		ufuncs.UserSetState = mySetState;
-		ufuncs.UserGetState = myGetState;
-#ifdef PM_SUPPORT
-		ufuncs.UserSuspend_Early = NULL;
-		ufuncs.UserSuspend_Late = NULL;
-		ufuncs.UserResume = NULL;
-#endif
-		ufuncs.privData = 0x54545454;
-		ufuncs.mode = PERFORMANCE_MODE;
-		spin_unlock_bh (&RawLock);
-
-		if ((handle[0] =
-					DmaRegister (ENGINE_TX, MYBAR, &ufuncs, BUFSIZE)) == NULL)
-		{
-			LOG_MSG ("Register for engine %d failed. Stopping.\n", ENGINE_TX);
-			spin_lock_bh (&RawLock);
-			xraw_DriverState = UNREGISTERED;
-			spin_unlock_bh (&RawLock);
-			// cdev_del(xrawCdev);
-			// unregister_chrdev_region (xrawDev, 1);
-			return -1;		
-		}
-		LOG_MSG ("Handle for engine %d is %p\n", ENGINE_TX, handle[0]);
-		spin_lock_init(&dma_lock);
-		spin_lock_bh (&RawLock);
-		ufuncs.UserInit = myInit;
-		ufuncs.UserPutPkt = myPutRxPkt;
-		ufuncs.UserGetPkt = myGetRxPkt;
-		ufuncs.UserSetState = mySetState;
-		ufuncs.UserGetState = myGetState;
-#ifdef PM_SUPPORT
-		ufuncs.UserSuspend_Early = NULL;
-		ufuncs.UserSuspend_Late = NULL;
-		ufuncs.UserResume = NULL;
-#endif
-		ufuncs.privData = 0x54545456;
-		ufuncs.mode = PERFORMANCE_MODE;
-		spin_unlock_bh (&RawLock);
-
-		if ((handle[2] =
-					DmaRegister (ENGINE_RX, MYBAR, &ufuncs, BUFSIZE)) == NULL)
-		{
-			LOG_MSG ("Register for engine %d failed. Stopping.\n", ENGINE_RX);
-			spin_lock_bh (&RawLock);
-			xraw_DriverState = UNREGISTERED;
-			spin_unlock_bh (&RawLock);
-			// cdev_del(xrawCdev);
-			// unregister_chrdev_region (xrawDev, 1);
-			return -1;		
-		}
-		LOG_MSG ("Handle for engine %d is %p\n", ENGINE_RX, handle[2]);
-
-
-	}
-#endif
 
 	if (xraw_DriverState < POLLING)
 	{
@@ -3689,12 +3187,11 @@ rawdata_init (void)
 		ret = xlnx_get_dma((void*)ptr_dma_desc->device , pfrom, &ptr_app_dma_desc);
 		if(ptr_app_dma_desc == NULL) 
 		{
-			LOG_MSG(KERN_ERR"\nSUMAN - Could not get valid dma descriptor %d\n", ret);
+			LOG_MSG(KERN_ERR"\n- Could not get valid dma descriptor %d\n", ret);
 			goto error;
 		}
 		else
 		{
-#if 1
 
 			/* First Registering Tx channel */ 
 			dir = OUT;
@@ -3703,7 +3200,7 @@ rawdata_init (void)
 
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not get s2c %d channel error %d\n", VIDEO_TX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not get s2c %d channel error %d\n", VIDEO_TX_CHANNEL_ID,ret);
 				goto error;
 			}
 			ret = xlnx_alloc_queues(ptr_chan_s2c[VIDEO_TX_CHANNEL_ID], &data_q_addr_hi, //Physical address
@@ -3713,20 +3210,15 @@ rawdata_init (void)
 					q_num_elements);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for s2c %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
+				LOG_MSG(KERN_ERR"\n- Could not allocate Qs for s2c %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
 				goto error;
 			}
-#if 0
-			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c[VIDEO_TX_CHANNEL_ID],
-					data_q_addr_hi,data_q_addr_lo,q_num_elements,
-					sta_q_addr_hi,sta_q_addr_lo,q_num_elements , COALESE_CNT,false);
-#endif
 			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c[VIDEO_TX_CHANNEL_ID],
 					data_q_addr_hi,data_q_addr_lo,q_num_elements,
 					sta_q_addr_hi,sta_q_addr_lo,q_num_elements , COALESE_CNT);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not activate s2c %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not activate s2c %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
 				goto error;
 			}
 
@@ -3737,7 +3229,7 @@ rawdata_init (void)
 
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not get s2c dst %d channel error %d\n", VIDEO_TX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not get s2c dst %d channel error %d\n", VIDEO_TX_CHANNEL_ID,ret);
 				goto error;
 			}
 			ret = xlnx_alloc_queues(ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID], &data_q_addr_hi, //Physical address
@@ -3747,32 +3239,25 @@ rawdata_init (void)
 					aux_q_num_elements);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for s2c dst %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
+				LOG_MSG(KERN_ERR"\n- Could not allocate Qs for s2c dst %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
 				goto error;
 			}
-#if 0
-			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID],
-					data_q_addr_hi,data_q_addr_lo,aux_q_num_elements,
-					sta_q_addr_hi,sta_q_addr_lo,aux_q_num_elements, COALESE_CNT,false);
-#endif
 			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID],
 					data_q_addr_hi,data_q_addr_lo,aux_q_num_elements,
 					sta_q_addr_hi,sta_q_addr_lo,aux_q_num_elements, COALESE_CNT);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not activate s2c dst %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not activate s2c dst %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
 				goto error;
 			}
 #endif
-#endif
-#if 1
 			/* Registering the Rx channel */
 			dir = IN;
 			ret = xlnx_get_dma_channel(ptr_app_dma_desc, VIDEO_RX_CHANNEL_ID, 
 					dir, &ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID],NULL);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not get s2c rx %d channel error %d\n", VIDEO_RX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not get s2c rx %d channel error %d\n", VIDEO_RX_CHANNEL_ID,ret);
 				goto error;
 			}
 
@@ -3783,31 +3268,24 @@ rawdata_init (void)
 					q_num_elements);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for s2c rx %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
+				LOG_MSG(KERN_ERR"\n- Could not allocate Qs for s2c rx %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
 				goto error;
 			}
-#if 0
-			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID],
-					data_q_addr_hi,data_q_addr_lo,q_num_elements,
-					sta_q_addr_hi,sta_q_addr_lo,q_num_elements,COALESE_CNT,false);
-#endif
 			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID],
 					data_q_addr_hi,data_q_addr_lo,q_num_elements,
 					sta_q_addr_hi,sta_q_addr_lo,q_num_elements,COALESE_CNT);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not activate s2c rx %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not activate s2c rx %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
 				goto error;
 			}
-#endif
-#if 1
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
 			dir = OUT;
 			ret = xlnx_get_dma_channel(ptr_app_dma_desc, VIDEO_RX_CHANNEL_ID, 
 					dir, &ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID],NULL);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not get rx s2c dst %d channel error %d\n", VIDEO_RX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not get rx s2c dst %d channel error %d\n", VIDEO_RX_CHANNEL_ID,ret);
 				goto error;
 			}
 
@@ -3818,30 +3296,23 @@ rawdata_init (void)
 					rx_aux_q_num_elements);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for rx s2c dst %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
+				LOG_MSG(KERN_ERR"\n- Could not allocate Qs for rx s2c dst %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
 				goto error;
 			}
-#if 0
-			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID],
-					data_q_addr_hi,data_q_addr_lo,rx_aux_q_num_elements,
-					sta_q_addr_hi,sta_q_addr_lo,rx_aux_q_num_elements,COALESE_CNT,false);
-#endif
 			ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID],
 					data_q_addr_hi,data_q_addr_lo,rx_aux_q_num_elements,
 					sta_q_addr_hi,sta_q_addr_lo,rx_aux_q_num_elements,COALESE_CNT);
 			if(ret < XLNX_SUCCESS) 
 			{
-				LOG_MSG(KERN_ERR"\nSUMAN - Could not activate rx s2c dst %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
+				LOG_MSG(KERN_ERR"\n- Could not activate rx s2c dst %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
 				goto error;
 			}
-#endif
 #endif
 			addr_typ_transfer[VIDEO_TX_CHANNEL_ID] = PHYS_ADDR;
 			addr_typ_transfer[VIDEO_RX_CHANNEL_ID] = PHYS_ADDR;
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
 			addr_typ_aux_transfer[VIDEO_TX_CHANNEL_ID] = EP_PHYS_ADDR;
 			addr_typ_aux_transfer[VIDEO_RX_CHANNEL_ID] = EP_PHYS_ADDR;
-#if 1
 			for(i=0;i<NUM_FRAMES_IN_PLDDR;i++)
 			{
 				psDstQsRangeTx[i].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE + (i * VIDEO_FRAME_SIZE);
@@ -3851,43 +3322,11 @@ rawdata_init (void)
 				//LOG_MSG(KERN_ERR"Rx Frame %d start address %X\n",i + 1, psDstQsRangeRx[i].frame_start_address);
 				psDstQsRangeRx[i].frame_end_address = psDstQsRangeRx[i].frame_start_address + VIDEO_FRAME_SIZE;
 			}
-#endif
-#if 0
-			psDstQsRangeTx[0].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE0;
-			psDstQsRangeTx[0].frame_end_address =   psDstQsRangeTx[0].frame_start_address + VIDEO_FRAME_SIZE;
-			psDstQsRangeTx[1].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE1;
-			psDstQsRangeTx[1].frame_end_address =   psDstQsRangeTx[1].frame_start_address + VIDEO_FRAME_SIZE;
-			psDstQsRangeTx[2].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE2;
-			psDstQsRangeTx[2].frame_end_address =   psDstQsRangeTx[2].frame_start_address + VIDEO_FRAME_SIZE;
-
-			psDstQsRangeRx[0].frame_start_address = PS_DDR_VDMA_RX_ADDR_BASE0;
-			psDstQsRangeRx[0].frame_end_address = psDstQsRangeRx[0].frame_start_address + VIDEO_FRAME_SIZE;
-			psDstQsRangeRx[1].frame_start_address = PS_DDR_VDMA_RX_ADDR_BASE1;
-			psDstQsRangeRx[1].frame_end_address = psDstQsRangeRx[1].frame_start_address + VIDEO_FRAME_SIZE;
-			psDstQsRangeRx[2].frame_start_address = PS_DDR_VDMA_RX_ADDR_BASE2;
-			psDstQsRangeRx[2].frame_end_address = psDstQsRangeRx[2].frame_start_address + VIDEO_FRAME_SIZE;
-#endif
 
 			TxDstDdrPhyAdrs = psDstQsRangeTx[0].frame_start_address;
 			RxDstDdrPhyAdrs = psDstQsRangeRx[0].frame_start_address;
 			TxDsttemp = TxDstDdrPhyAdrs;
 			RxDsttemp = RxDstDdrPhyAdrs;
-#if 0
-			sprintf(name_buf,"AuxChanns Pumping Thread");
-
-			/* Spawn a kernel thread to pump data */
-			task = kthread_run(&aux_datapump_function,(void *)NULL,name_buf);
-			if(task == NULL) 
-			{
-				LOG_MSG(KERN_ERR"\nSUMAN --> Thread spawning failed for auxilary channels");
-				goto error;
-			}
-			else
-			{
-				LOG_MSG(KERN_ERR"\nSUMAN --> Thread spawning success for auxilary channels");
-			}
-#endif
-#if 1
 			for(i=0;i<(NUM_FRAMES_IN_PLDDR);i++)
 			{
 				for(j=0; j<FRAME_PIXEL_ROWS;j++)
@@ -3902,12 +3341,12 @@ rawdata_init (void)
 						state = ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->chann_state;
 
 #ifdef PUMP_APP_DBG_PRNT
-						LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
+						LOG_MSG(KERN_ERR"\n- Failed::::::Buffer allocated transmit %d\n", retval);
 #endif
 						if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 						{
 #ifdef PUMP_APP_DBG_PRNT
-							LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
+							LOG_MSG(KERN_ERR"\n- Context Q saturated %d\n",state);
 #endif
 							ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->chann_state = XLNX_DMA_CHANN_NO_ERR;
 							//	set_task_state(current, TASK_INTERRUPTIBLE);  
@@ -3924,8 +3363,6 @@ rawdata_init (void)
 					}
 				}
 			}
-#endif
-#if 1
 			sprintf(name_buf,"Rx Dst WorkQueue");
 			rx_dst_workq = create_singlethread_workqueue((const char*)name_buf); 
 			if(rx_dst_workq != NULL)
@@ -3936,7 +3373,6 @@ rawdata_init (void)
 
 			xlnx_register_doorbell_cbk(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID], c2s_fr_tsmt_init_cbk);
 			//LOG_MSG(KERN_ERR"Rx Aux Doorbell callback registered\n");
-#if 1
 			xlnx_register_doorbell_cbk(ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID], c2s_fr_tsmt_init_cbk);
 			//LOG_MSG(KERN_ERR"Tx Aux Doorbell callback registered\n");
 
@@ -3945,8 +3381,6 @@ rawdata_init (void)
 			//LOG_MSG(KERN_ERR"Tx Doorbell callback registered\n");
 			xlnx_register_doorbell_cbk(ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID], c2s_fr_tsmt_init_cbk);
 			//LOG_MSG(KERN_ERR"Rx  Doorbell callback registered\n");
-#endif
-#endif
 #endif
 
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
@@ -3962,10 +3396,8 @@ rawdata_init (void)
 
 		}
 	}
-#if 1
 	RawTestMode |=TEST_START;
 	RawTestMode |= ENABLE_LOOPBACK;
-#endif
 
 	/* Now allocating Memory for For FrameBuffer */
 	INIT_LIST_HEAD(&fb_data_0.list);
@@ -4022,76 +3454,13 @@ rawdata_cleanup (void)
 
 	LOG_MSG (KERN_INFO "%s: Unregistering Xilinx driver from kernel.\n", MYNAME);
 	xraw_DriverState = UNREGISTERED;
-#if 0
-	if (TxBufCnt != RxBufCnt)
-	{
-		LOG_MSG ("%s: Buffers Transmitted %u Received %u\n", MYNAME, TxBufCnt,
-				RxBufCnt);
-
-		mdelay (1);
-	}
-#ifdef FIFO_EMPTY_CHECK
-	DmaFifoEmptyWait(MYHANDLE,DIR_TYPE_S2C);
-	// wait for appropriate time to stabalize
-	mdelay(STABILITY_WAIT_TIME);
-#endif
-	DmaUnregister (handle[0]);
-#ifdef FIFO_EMPTY_CHECK
-	DmaFifoEmptyWait(MYHANDLE,DIR_TYPE_C2S);
-	// wait for appropriate time to stabalize
-	mdelay(STABILITY_WAIT_TIME);
-#endif
-	DmaUnregister (handle[2]);
-
-
-#ifdef HOSTCONTROL
-	mdelay(10);
-	reg = XIo_In32 (TXbarbase + HOST_STATUS_OFFSET);
-	reg = reg & HOST_NOT_READY_MASK; 
-	mdelay(10);
-	XIo_Out32 (TXbarbase +HOST_STATUS_OFFSET,reg);
-	LOG_MSG(KERN_ERR"Set host not ready during uninstall\n");
-#endif  
-
-	PrintSummary ();
-	/*Unregistering the char driver  */
-	if (xrawCdev != NULL)
-	{
-		LOG_MSG ("Unregistering char device driver\n");
-		// cdev_del (xrawCdev);
-		// unregister_chrdev_region (xrawCdev->dev, 1);
-	}
-	//unregister_framebuffer(info);
-
-	mdelay (1000);
-
-	/* Not sure if free_page() sleeps or not. */
-	spin_lock_bh (&RawLock);
-	LOG_MSG ("Freeing user buffers\n");
-	for (i = 0; i < TxBufs.TotalNum; i++)
-		//kfree(TxBufs.origVA[i]);
-		free_page ((unsigned long) (TxBufs.origVA[i]));
-	for (i = 0; i < RxBufs.TotalNum; i++)
-		//kfree(RxBufs.origVA[i]);
-		free_page ((unsigned long) (RxBufs.origVA[i]));
-	spin_unlock_bh (&RawLock);
-#endif
 
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
-#if 1
-#if 1
 	/* Flush workqueue */
 	flush_workqueue(rx_dst_workq);
-#if 0
-	mdelay (2000);
-	/* Flush Work */
-	flush_work_sync(&rx_dst_work);
-#endif
 	mdelay (2000);
 	/* Destroy Work Queue */
 	destroy_workqueue(rx_dst_workq);
-#endif
-#if 1
 	//Tx cHannel
 	/* Stop the IOs over channel */
 	xlnx_deactivate_dma_channel(ptr_chan_s2c[VIDEO_TX_CHANNEL_ID]);
@@ -4115,8 +3484,6 @@ rawdata_cleanup (void)
 	xlnx_deactivate_dma_channel(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]);
 	//	xlnx_stop_channel_IO(ptr_rxauxapp_dma_desc, true);
 	xlnx_dealloc_queues(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]);
-#endif
-#endif
 #endif
 	/* Freeing Kernel Memory of Framebuffer*/
 #ifdef V4L2_DEVICE
@@ -4179,32 +3546,6 @@ static void ResetDMAonStopTest(void)
 	xlnx_deactivate_dma_channel(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]);
 	//	xlnx_stop_channel_IO(ptr_rxauxapp_dma_desc, true);
 	xlnx_dealloc_queues(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]);
-#if 0
-	ptr_dma_desc = xlnx_get_pform_dma_desc((void*)NULL, 0, 0);
-
-	ret = xlnx_get_dma((void*)ptr_dma_desc->device , pfrom, &ptr_app_dma_desc);
-	if(ptr_app_dma_desc == NULL) 
-	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not get valid dma descriptor %d\n", ret);
-		goto error;
-	}
-#endif
-#if 0
-
-	/* First Registering Tx channel */ 
-	dir = OUT;
-	ret = xlnx_get_dma_channel(ptr_app_dma_desc, VIDEO_TX_CHANNEL_ID, 
-			dir, &ptr_chan_s2c[VIDEO_TX_CHANNEL_ID],NULL);
-
-	ptr_chan_s2c[VIDEO_TX_CHANNEL_ID]->ptr_data_q.ptr_q = NULL;
-	ptr_chan_s2c[VIDEO_TX_CHANNEL_ID]->ptr_sta_q = NULL;
-
-	if(ret < XLNX_SUCCESS) 
-	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not get s2c %d channel error %d\n", VIDEO_TX_CHANNEL_ID,ret);
-		goto error;
-	}
-#endif
 	ret = xlnx_alloc_queues(ptr_chan_s2c[VIDEO_TX_CHANNEL_ID], &data_q_addr_hi, //Physical address
 			&data_q_addr_lo,//Physical address
 			&sta_q_addr_hi,//Physical address
@@ -4212,38 +3553,19 @@ static void ResetDMAonStopTest(void)
 			q_num_elements);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for s2c %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
+		LOG_MSG(KERN_ERR"\n- Could not allocate Qs for s2c %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
 		goto error;
 	}
-#if 0
-	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c[VIDEO_TX_CHANNEL_ID],
-			data_q_addr_hi,data_q_addr_lo,q_num_elements,
-			sta_q_addr_hi,sta_q_addr_lo,q_num_elements , COALESE_CNT,false);
-#endif
 	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c[VIDEO_TX_CHANNEL_ID],
 			data_q_addr_hi,data_q_addr_lo,q_num_elements,
 			sta_q_addr_hi,sta_q_addr_lo,q_num_elements , COALESE_CNT);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not activate s2c %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
+		LOG_MSG(KERN_ERR"\n- Could not activate s2c %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
 		goto error;
 	}
 
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
-#if 0
-	dir = IN;
-	ret = xlnx_get_dma_channel(ptr_app_dma_desc, VIDEO_TX_CHANNEL_ID, 
-			dir, &ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID],NULL);
-
-	if(ret < XLNX_SUCCESS) 
-	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not get s2c dst %d channel error %d\n", VIDEO_TX_CHANNEL_ID,ret);
-		goto error;
-	}
-
-	ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->ptr_data_q.ptr_q = NULL;
-	ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->ptr_sta_q = NULL;
-#endif
 	ret = xlnx_alloc_queues(ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID], &data_q_addr_hi, //Physical address
 			&data_q_addr_lo,//Physical address
 			&sta_q_addr_hi,//Physical address
@@ -4251,38 +3573,20 @@ static void ResetDMAonStopTest(void)
 			aux_q_num_elements);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for s2c dst %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
+		LOG_MSG(KERN_ERR"\n- Could not allocate Qs for s2c dst %d channel %d\n",VIDEO_TX_CHANNEL_ID, ret);
 		goto error;
 	}
-#if 0
-	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID],
-			data_q_addr_hi,data_q_addr_lo,aux_q_num_elements,
-			sta_q_addr_hi,sta_q_addr_lo,aux_q_num_elements, COALESE_CNT,false);
-#endif
 	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID],
 			data_q_addr_hi,data_q_addr_lo,aux_q_num_elements,
 			sta_q_addr_hi,sta_q_addr_lo,aux_q_num_elements, COALESE_CNT);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not activate s2c dst %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
+		LOG_MSG(KERN_ERR"\n- Could not activate s2c dst %d channel %d\n", VIDEO_TX_CHANNEL_ID,ret);
 		goto error;
 	}
 #endif
 #endif
 	/* Registering the Rx channel */
-#if 0
-	dir = IN;
-	ret = xlnx_get_dma_channel(ptr_app_dma_desc, VIDEO_RX_CHANNEL_ID, 
-			dir, &ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID],NULL);
-	if(ret < XLNX_SUCCESS) 
-	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not get s2c rx %d channel error %d\n", VIDEO_RX_CHANNEL_ID,ret);
-		goto error;
-	}
-
-	ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID]->ptr_data_q.ptr_q = NULL;
-	ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID]->ptr_sta_q = NULL;
-#endif
 	ret = xlnx_alloc_queues(ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID], &data_q_addr_hi, //Physical address
 			&data_q_addr_lo,//Physical address
 			&sta_q_addr_hi,//Physical address
@@ -4290,36 +3594,18 @@ static void ResetDMAonStopTest(void)
 			q_num_elements);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for s2c rx %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
+		LOG_MSG(KERN_ERR"\n- Could not allocate Qs for s2c rx %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
 		goto error;
 	}
-#if 0
-	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID],
-			data_q_addr_hi,data_q_addr_lo,q_num_elements,
-			sta_q_addr_hi,sta_q_addr_lo,q_num_elements,COALESE_CNT,false);
-#endif
 	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID],
 			data_q_addr_hi,data_q_addr_lo,q_num_elements,
 			sta_q_addr_hi,sta_q_addr_lo,q_num_elements,COALESE_CNT);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not activate s2c rx %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
+		LOG_MSG(KERN_ERR"\n- Could not activate s2c rx %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
 		goto error;
 	}
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
-#if 0
-	dir = OUT;
-	ret = xlnx_get_dma_channel(ptr_app_dma_desc, VIDEO_RX_CHANNEL_ID, 
-			dir, &ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID],NULL);
-	if(ret < XLNX_SUCCESS) 
-	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not get rx s2c dst %d channel error %d\n", VIDEO_RX_CHANNEL_ID,ret);
-		goto error;
-	}
-
-	ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->ptr_data_q.ptr_q = NULL;
-	ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID]->ptr_sta_q = NULL;
-#endif
 	ret = xlnx_alloc_queues(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID], &data_q_addr_hi, //Physical address
 			&data_q_addr_lo,//Physical address
 			&sta_q_addr_hi,//Physical address
@@ -4327,32 +3613,26 @@ static void ResetDMAonStopTest(void)
 			rx_aux_q_num_elements);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not allocate Qs for rx s2c dst %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
+		LOG_MSG(KERN_ERR"\n- Could not allocate Qs for rx s2c dst %d channel %d\n",VIDEO_RX_CHANNEL_ID, ret);
 		goto error;
 	}
-#if 0
-	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID],
-			data_q_addr_hi,data_q_addr_lo,rx_aux_q_num_elements,
-			sta_q_addr_hi,sta_q_addr_lo,rx_aux_q_num_elements,COALESE_CNT,false);
-#endif
 	ret = xlnx_activate_dma_channel(ptr_app_dma_desc, ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID],
 			data_q_addr_hi,data_q_addr_lo,rx_aux_q_num_elements,
 			sta_q_addr_hi,sta_q_addr_lo,rx_aux_q_num_elements,COALESE_CNT);
 	if(ret < XLNX_SUCCESS) 
 	{
-		LOG_MSG(KERN_ERR"\nSUMAN - Could not activate rx s2c dst %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
+		LOG_MSG(KERN_ERR"\n- Could not activate rx s2c dst %d channel %d\n", VIDEO_RX_CHANNEL_ID,ret);
 		goto error;
 	}
 #endif
 
-	LOG_MSG(KERN_ERR"\nSUMAN - Activated both channels along with aux");
+	LOG_MSG(KERN_ERR"\n- Activated both channels along with aux");
 
 	addr_typ_transfer[VIDEO_TX_CHANNEL_ID] = PHYS_ADDR;
 	addr_typ_transfer[VIDEO_RX_CHANNEL_ID] = PHYS_ADDR;
 #ifdef PFORM_USCALE_NO_EP_PROCESSOR
 	addr_typ_aux_transfer[VIDEO_TX_CHANNEL_ID] = EP_PHYS_ADDR;
 	addr_typ_aux_transfer[VIDEO_RX_CHANNEL_ID] = EP_PHYS_ADDR;
-#if 1
 	for(i=0;i<NUM_FRAMES_IN_PLDDR;i++)
 	{
 		psDstQsRangeTx[i].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE + (i * VIDEO_FRAME_SIZE);
@@ -4362,44 +3642,12 @@ static void ResetDMAonStopTest(void)
 		//LOG_MSG(KERN_ERR"Rx Frame %d start address %X\n",i + 1, psDstQsRangeRx[i].frame_start_address);
 		psDstQsRangeRx[i].frame_end_address = psDstQsRangeRx[i].frame_start_address + VIDEO_FRAME_SIZE;
 	}
-#endif
-#if 0
-	psDstQsRangeTx[0].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE0;
-	psDstQsRangeTx[0].frame_end_address =   psDstQsRangeTx[0].frame_start_address + VIDEO_FRAME_SIZE;
-	psDstQsRangeTx[1].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE1;
-	psDstQsRangeTx[1].frame_end_address =   psDstQsRangeTx[1].frame_start_address + VIDEO_FRAME_SIZE;
-	psDstQsRangeTx[2].frame_start_address = PS_DDR_VDMA_TX_ADDR_BASE2;
-	psDstQsRangeTx[2].frame_end_address =   psDstQsRangeTx[2].frame_start_address + VIDEO_FRAME_SIZE;
-
-	psDstQsRangeRx[0].frame_start_address = PS_DDR_VDMA_RX_ADDR_BASE0;
-	psDstQsRangeRx[0].frame_end_address = psDstQsRangeRx[0].frame_start_address + VIDEO_FRAME_SIZE;
-	psDstQsRangeRx[1].frame_start_address = PS_DDR_VDMA_RX_ADDR_BASE1;
-	psDstQsRangeRx[1].frame_end_address = psDstQsRangeRx[1].frame_start_address + VIDEO_FRAME_SIZE;
-	psDstQsRangeRx[2].frame_start_address = PS_DDR_VDMA_RX_ADDR_BASE2;
-	psDstQsRangeRx[2].frame_end_address = psDstQsRangeRx[2].frame_start_address + VIDEO_FRAME_SIZE;
-#endif
 
 	TxDstDdrPhyAdrs = psDstQsRangeTx[0].frame_start_address;
 	RxDstDdrPhyAdrs = psDstQsRangeRx[0].frame_start_address;
 	TxDsttemp = TxDstDdrPhyAdrs;
 	RxDsttemp = RxDstDdrPhyAdrs;
-#if 0
-	sprintf(name_buf,"AuxChanns Pumping Thread");
-
-	/* Spawn a kernel thread to pump data */
-	task = kthread_run(&aux_datapump_function,(void *)NULL,name_buf);
-	if(task == NULL) 
-	{
-		LOG_MSG(KERN_ERR"\nSUMAN --> Thread spawning failed for auxilary channels");
-		goto error;
-	}
-	else
-	{
-		LOG_MSG(KERN_ERR"\nSUMAN --> Thread spawning success for auxilary channels");
-	}
-#endif
-	LOG_MSG(KERN_ERR"\nSUMAN --> About to populate Rx destination queue with DDR addresses");
-#if 1
+	LOG_MSG(KERN_ERR"\n--> About to populate Rx destination queue with DDR addresses");
 	for(i=0;i<(NUM_FRAMES_IN_PLDDR);i++)
 	{
 		for(j=0; j<FRAME_PIXEL_ROWS;j++)
@@ -4414,12 +3662,12 @@ static void ResetDMAonStopTest(void)
 				state = ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->chann_state;
 
 #ifdef PUMP_APP_DBG_PRNT
-				LOG_MSG(KERN_ERR"\nSUMAN - Failed::::::Buffer allocated transmit %d\n", retval);
+				LOG_MSG(KERN_ERR"\n- Failed::::::Buffer allocated transmit %d\n", retval);
 #endif
 				if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 				{
 #ifdef PUMP_APP_DBG_PRNT
-					LOG_MSG(KERN_ERR"\nSUMAN - Context Q saturated %d\n",state);
+					LOG_MSG(KERN_ERR"\n- Context Q saturated %d\n",state);
 #endif
 					ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID]->chann_state = XLNX_DMA_CHANN_NO_ERR;
 					//	set_task_state(current, TASK_INTERRUPTIBLE);  
@@ -4436,8 +3684,6 @@ static void ResetDMAonStopTest(void)
 			}
 		}
 	}
-#endif
-#if 1
 	sprintf(name_buf,"Rx Dst WorkQueue");
 	rx_dst_workq = create_singlethread_workqueue((const char*)name_buf); 
 	if(rx_dst_workq != NULL)
@@ -4445,25 +3691,22 @@ static void ResetDMAonStopTest(void)
 		//LOG_MSG(KERN_ERR"Rx Dst Work Queue created successfully\n");
 	}
 	INIT_WORK(&(rx_dst_work), c2s_processed_fr_tsmt);
-	LOG_MSG(KERN_ERR"\nSUMAN --> Created Rx Work Queue");
+	LOG_MSG(KERN_ERR"\n--> Created Rx Work Queue");
 
 	xlnx_register_doorbell_cbk(ptr_rxchan_s2c_dst[VIDEO_RX_CHANNEL_ID], c2s_fr_tsmt_init_cbk);
-	LOG_MSG(KERN_ERR"\nSUMAN --> Registering Call back at %d ",__LINE__);
+	LOG_MSG(KERN_ERR"\n--> Registering Call back at %d ",__LINE__);
 	LOG_MSG(KERN_ERR"Rx Aux Doorbell callback registered\n");
-#if 1
 	xlnx_register_doorbell_cbk(ptr_chan_s2c_dst[VIDEO_TX_CHANNEL_ID], c2s_fr_tsmt_init_cbk);
-	LOG_MSG(KERN_ERR"\nSUMAN --> Registering Call back at %d ",__LINE__);
+	LOG_MSG(KERN_ERR"\n--> Registering Call back at %d ",__LINE__);
 	LOG_MSG(KERN_ERR"Tx Aux Doorbell callback registered\n");
 
 	xlnx_register_doorbell_cbk(ptr_chan_s2c[VIDEO_TX_CHANNEL_ID], c2s_fr_tsmt_init_cbk);
-	LOG_MSG(KERN_ERR"\nSUMAN --> Registering Call back at %d ",__LINE__);	
+	LOG_MSG(KERN_ERR"\n--> Registering Call back at %d ",__LINE__);	
 	LOG_MSG(KERN_ERR"Tx Doorbell callback registered\n");
 
 	xlnx_register_doorbell_cbk(ptr_rxchan_s2c[VIDEO_RX_CHANNEL_ID], c2s_fr_tsmt_init_cbk);
-	LOG_MSG(KERN_ERR"\nSUMAN --> Registering Call back at %d ",__LINE__);	
+	LOG_MSG(KERN_ERR"\n--> Registering Call back at %d ",__LINE__);	
 	LOG_MSG(KERN_ERR"Rx  Doorbell callback registered\n");
-#endif
-#endif
 #endif
 	tx_channel_num_empty_bds = NUM_Q_ELEM - 2;
 	rx_channel_num_empty_bds = NUM_Q_ELEM - 2;

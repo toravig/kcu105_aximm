@@ -33,7 +33,7 @@
 
 //#define ENABLE_DEBUG 1
 
-#if ENABLE_DEBUG
+#ifdef ENABLE_DEBUG
 #define LOG_MSG printk
 #else
 #define LOG_MSG(...)
