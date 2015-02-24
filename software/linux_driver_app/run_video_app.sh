@@ -11,6 +11,8 @@ cd util
 echo "Installing VLC player, this may take some time"
 /bin/sh install_vlc.sh
 else
+cd util
+echo "Installing VLC player, this may take some time"
 /bin/sh install_vlc_32.sh
 fi
 cd ../
