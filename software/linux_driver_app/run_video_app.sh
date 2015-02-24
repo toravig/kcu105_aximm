@@ -7,7 +7,7 @@ echo "About to invoke remove modules script"
 /bin/sh remove_modules.sh
 cd util
 echo "Installing VLC player, this may take some time"
-/bin/sh install_vlc.sh
+/bin/sh install_vlc_32.sh
 cd ../
 cd driver
 echo "Entered driver folder after calling remove modules"
@@ -17,7 +17,7 @@ if [ "$?" != "0" ]; then
 	exit $compilation_clean_error;
 fi
 echo "Cleaning of Video driver done"
-make DRIVER_MODE=VIDEO TEST_MODE=VIDEOACC
+make DRIVER_MODE=VIDEO TEST_MODE=VIDEOACC 1>/dev/null 2>&1 
 if [ "$?" != "0" ]; then
 	echo "Error in compiling Video Driver"
 	exit $compilation_error;
