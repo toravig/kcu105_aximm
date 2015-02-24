@@ -5,9 +5,14 @@ compilation_clean_error=3
 
 echo "About to invoke remove modules script"
 /bin/sh remove_modules.sh
+if [ $(getconf LONG_BIT) == "64" ]
+then
 cd util
 echo "Installing VLC player, this may take some time"
+/bin/sh install_vlc.sh
+else
 /bin/sh install_vlc_32.sh
+fi
 cd ../
 cd driver
 echo "Entered driver folder after calling remove modules"
