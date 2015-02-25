@@ -425,6 +425,8 @@ static int ReadPCIState(void * pdev, PCIState * pcistate)
 #else
 	pcistate->DeviceId = NWL_DMA_HW_SGL_CNTRL;
 #endif
+#elif defined(VIDEO_ACC_DESIGN)
+	pcistate->DeviceId = NWL_DMA_VAL_DEVID_VIDEO;
 #else
 	pcistate->DeviceId = NWL_DMA_VAL_DEVID;
 #endif
