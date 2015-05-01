@@ -16,7 +16,7 @@
  ** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  ** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  ** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- ** NONINFRINGEMENT. IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY
+ ** NONINFRINGEMENT. IN NO EVENT SHALL XILINX BE LIABLE FOR ANY
  ** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  ** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  ** SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -39,20 +39,12 @@
 #include <linux/dma-mapping.h>
 #include <linux/cdev.h>
 
-
-
 #include "../xdma/ps_pcie_dma_driver.h"
 #include "../xdma/ps_pcie_pf.h"
 #include "../include/xpmon_be.h"
 
-
-
-
-
 #define MYNAME   "Raw Data 0"
 #define DEV_NAME  "xraw_data0"
-
-
 
 #define WRITE_TO_CARD   0	
 #define READ_FROM_CARD  1
@@ -69,11 +61,7 @@
 #define TX_CHANNEL 0
 #define RX_CHANNEL 1
 
-
-
 #define GEN_CHK_BUF_ADDR GC_BUFF_ADDR 
-
-
 
 
 unsigned int tx_channel_num_empty_bds[] = {NUM_Q_ELEM - 2,NUM_Q_ELEM - 2,NUM_Q_ELEM - 2,NUM_Q_ELEM - 2}; //NOTE::::We can fill (Q len - 1) BD elements in rx side at start of day
@@ -87,41 +75,27 @@ ps_pcie_dma_desc_t *ptr_txapp_dma_desc = NULL;
 ps_pcie_dma_desc_t *ptr_TxAuxapp_dma_desc = NULL;
 
 
-//struct timer_list data_pump_timer[PS_PCIE_NUM_DMA_CHANNELS];
 ps_pcie_dma_chann_desc_t *ptr_chan_s2c = NULL;
 ps_pcie_dma_chann_desc_t *ptr_Auxchan_s2c = NULL;
 
 unsigned char *glb_buf[PS_PCIE_NUM_DMA_CHANNELS];
 addr_type_t addr_typ_pmp[PS_PCIE_NUM_DMA_CHANNELS];
 
-
-
-
 ps_pcie_dma_desc_t *ptr_rxapp_dma_desc = NULL;
 ps_pcie_dma_desc_t *ptr_rxauxapp_dma_desc = NULL;
 
-//struct timer_list data_pump_timer[PS_PCIE_NUM_DMA_CHANNELS];
 ps_pcie_dma_chann_desc_t *ptr_rxchan_s2c = NULL;
 ps_pcie_dma_chann_desc_t *ptr_rxauxchan_s2c = NULL;
 
 unsigned char *gbl_buf[PS_PCIE_NUM_DMA_CHANNELS];
 addr_type_t addr_typ_rx[PS_PCIE_NUM_DMA_CHANNELS];
 
-
-
-
 struct cdev *xrawCdev=NULL;
 int xraw_UserOpen = 0;
-
-
-
-
 
 unsigned int  RawTestMode = TEST_STOP;
 unsigned int RawMinPktSize = 0x40;
 unsigned int RawMaxPktSize = 0x8000;
-
-
 
 typedef struct BufferInfoQ
 {
@@ -170,22 +144,14 @@ Returns: 0 for success / -1 for failure
 */
 int getBuffInfo (BufferInfoQue * bQue, BufferInfo * buff);
 
-
-
-
-
-
 PktBuf ** Dqueue=NULL;
 PktBuf ** Rxqueue=NULL;
-
 
 unsigned int WriteIndex;
 unsigned int ReadIndex;
 
 unsigned int RxWriteIndex;
 unsigned int RxReadIndex;
-
-
 
 /* 
    putBuffInfo is used for adding an buffer element to the queue.
@@ -195,8 +161,7 @@ Returns: 0 for success / -1 for failure
 
 */
 
-	int
-putBuffInfo (BufferInfoQue * bQue, BufferInfo buff)
+int putBuffInfo (BufferInfoQue * bQue, BufferInfo buff)
 {
 
 	// assert (bQue != NULL)
@@ -239,8 +204,7 @@ putBuffInfo (BufferInfoQue * bQue, BufferInfo buff)
 Returns: 0 for success / -1 for failure 
 
 */
-	int
-getBuffInfo (BufferInfoQue * bQue, BufferInfo * buff)
+int getBuffInfo (BufferInfoQue * bQue, BufferInfo * buff)
 {
 	// assert if bQue is NULL
 	if (!buff || !bQue)
@@ -278,9 +242,6 @@ getBuffInfo (BufferInfoQue * bQue, BufferInfo * buff)
 	return QSUCCESS;
 
 }
-
-
-
 
 void cbk_data_pump(struct _ps_pcie_dma_chann_desc *ptr_chann, void *data, unsigned int compl_bytes,unsigned short uid, unsigned int num_frags)
 {
@@ -334,11 +295,6 @@ void cbk_data_pump(struct _ps_pcie_dma_chann_desc *ptr_chann, void *data, unsign
 	}
 }
 
-
-
-
-
-
 void cbk_data_rxpump(struct _ps_pcie_dma_chann_desc *ptr_chann, void *data, unsigned int compl_bytes,unsigned short uid, unsigned int num_frags)
 {
 	PktBuf * pbuf;
@@ -354,8 +310,6 @@ void cbk_data_rxpump(struct _ps_pcie_dma_chann_desc *ptr_chann, void *data, unsi
 		ptr_chann->chann_state = XLNX_DMA_CHANN_NO_ERR;
 	}
 		//  rx_channel_num_empty_bds += num_frags;	
-
-
 
 	for(i=0; i< num_frags; i++)
 	{
@@ -383,12 +337,6 @@ void cbk_data_rxpump(struct _ps_pcie_dma_chann_desc *ptr_chann, void *data, unsi
 	tempBuffInfo.endSize=pbuf->size;
 	/* put the packet in driver queue*/
 	putBuffInfo (&RxDoneQ, tempBuffInfo);
-
-
-
-
-
-
 }
 
 
@@ -419,7 +367,6 @@ fill_another:
 				{
 					int state = ptr_chann->chann_state;
 
-					//spin_unlock_irqrestore(&chann->channel_lock, flags);
 					if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 					{
 					}
@@ -467,7 +414,6 @@ fill_another:
 		{
 			int state = ptr_chann->chann_state;
 
-			//spin_unlock_irqrestore(&chann->channel_lock, flags);
 			if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 			{
 			}
@@ -488,8 +434,6 @@ fill_another:
 }
 
 
-
-
 static int DmaSetupTransmit( int num ,const char __user * buffer, size_t length)   
 {
 	int j;
@@ -499,7 +443,6 @@ static int DmaSetupTransmit( int num ,const char __user * buffer, size_t length)
 	unsigned int allocPages;   
 	unsigned long first, last; 
 	struct page** cachePages;  
-	unsigned long flags;
 	PktBuf * pbuf;
 	int retval;
 	int last_frag =0;
@@ -589,15 +532,12 @@ static int DmaSetupTransmit( int num ,const char __user * buffer, size_t length)
 			}
 
 
-			spin_lock_irqsave(&chann->channel_lock, flags);
-			//		spin_lock_bh(&chann->channel_lock);
-			//spin_lock(&chann->channel_lock);
+			spin_lock_bh(&chann->channel_lock);
 			retval = xlnx_data_frag_io(chann,pbuf->pktBuf,PHYS_ADDR, pbuf->size ,cbk_data_pump ,/*num_pkts+1*/1, last_frag, /*OUT,*/Dqueue);
 			if(retval < XLNX_SUCCESS) 
 			{
 				int state = chann->chann_state;
 
-				//spin_unlock_irqrestore(&chann->channel_lock, flags);
 
 				dma_unmap_page(chann->ptr_dma_desc->dev,(dma_addr_t)pbuf->pktBuf,pbuf->size,DMA_TO_DEVICE);
 				page_cache_release(cachePages[j]);
@@ -606,36 +546,19 @@ static int DmaSetupTransmit( int num ,const char __user * buffer, size_t length)
 
 				if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 				{
-
 					printk(KERN_ERR"\n Context Q saturated %d\n",state);
-
-					//ptr_chan_s2c_0->chann_state = XLNX_DMA_CHANN_NO_ERR;
-
-					spin_unlock_irqrestore(&chann->channel_lock, flags);
-					//spin_unlock(&chann->channel_lock);
-
 				}
 
 			}
 			else
 			{
-
-
 				total += pbuf->size;
 				WriteIndex++;
 				if(WriteIndex >= NUM_Q_ELEM)
 					WriteIndex=0;
 				tx_channel_num_empty_bds[chann->chann_id]--;
-
-				//	 kfree(cachePages);
-
-				spin_unlock_irqrestore(&chann->channel_lock, flags);
-				//	spin_unlock(&chann->channel_lock);
 			}
-
-
-
-
+				spin_unlock_bh(&chann->channel_lock);
 		}
 		/****************************************************************/
 
@@ -652,9 +575,6 @@ static int DmaSetupTransmit( int num ,const char __user * buffer, size_t length)
 }
 
 
-
-
-
 static int DmaSetupReceive( int num ,const char __user * buffer, size_t length)   
 {
 	int j;
@@ -664,7 +584,6 @@ static int DmaSetupReceive( int num ,const char __user * buffer, size_t length)
 	unsigned int allocPages;   
 	unsigned long first, last; 
 	struct page** cachePages;  
-	unsigned long flags;
 	PktBuf * pbuf;
 	int retval;
 	int last_frag =0;
@@ -753,54 +672,32 @@ static int DmaSetupReceive( int num ,const char __user * buffer, size_t length)
 			}
 
 
-			spin_lock_irqsave(&chann->channel_lock, flags);
-			//  spin_lock(&chann->channel_lock);
-			//		spin_lock_bh(&chann->channel_lock);
+			spin_lock_bh(&chann->channel_lock);
 			retval = xlnx_data_frag_io(chann,(unsigned char *)bufPA,PHYS_ADDR, pbuf->size ,cbk_data_rxpump ,/*num_pkts+1*/1, last_frag, /*OUT,*/ Rxqueue);
 			if(retval < XLNX_SUCCESS) 
 			{
 				int state = chann->chann_state;
-
-				//spin_unlock_irqrestore(&chann->channel_lock, flags);
-
 				dma_unmap_page(chann->ptr_dma_desc->dev,pbuf->bufPA,pbuf->size,DMA_FROM_DEVICE);
 				page_cache_release((struct page *)pbuf->pageAddr);
-
 				printk(KERN_ERR"\n Failed::::::Buffer allocated transmit %d\n", retval);
 
 				if(state == XLNX_DMA_CNTXTQ_SATURATED || state == XLNX_DMA_CHANN_SATURATED) 
 				{
-
 					printk(KERN_ERR"\n Context Q saturated %d\n",state);
-
-					//	chann->chann_state = XLNX_DMA_CHANN_NO_ERR;
-
-
-
 				}
 
-
 			}
-
 			else
 			{
-
-
 				total += pbuf->size;
 				RxWriteIndex++;
 				if(RxWriteIndex >= NUM_Q_ELEM)
 					RxWriteIndex=0;
 				rx_channel_num_empty_bds--;
-
 			}
-
-			//	spin_unlock(&chann->channel_lock);
-
-			spin_unlock_irqrestore(&chann->channel_lock, flags);
+				spin_unlock_bh(&chann->channel_lock);
 
 		}
-
-
 
 	}
 
@@ -808,35 +705,22 @@ static int DmaSetupReceive( int num ,const char __user * buffer, size_t length)
 	{
 		return -1; 
 	}
-
-
 	kfree(cachePages);
-
-
-
 	return total;
 }
-
 
 
 int data_rxaux_function(ps_pcie_dma_chann_desc_t *data)
 {
 	int retval;
-	//unsigned int num_pkts = 0;
-	//unsigned long flags;
 	int i=0;
 	ps_pcie_dma_chann_desc_t *chann = (ps_pcie_dma_chann_desc_t *)data;
 	unsigned int packet_size =0;
 
-
-
 	for(i=0;i< NUM_Q_ELEM -2 ;i++)
 	{
 
-
-		//spin_lock_irqsave(&chann->channel_lock, flags);
 		spin_lock_bh(&chann->channel_lock);
-
 		packet_size = RawMaxPktSize ;
 		retval = xlnx_data_frag_io(chann, (char *)GEN_CHK_BUF_ADDR, 
 
@@ -846,12 +730,10 @@ int data_rxaux_function(ps_pcie_dma_chann_desc_t *data)
 		{
 			if(chann->chann_state == XLNX_DMA_CNTXTQ_SATURATED || chann->chann_state == XLNX_DMA_CHANN_SATURATED) 
 			{
-				//spin_unlock_irqrestore(&chann->channel_lock, flags);
 				spin_unlock_bh(&chann->channel_lock);
 			}
 			else
 			{
-				//spin_unlock_irqrestore(&chann->channel_lock, flags);
 				spin_unlock_bh(&chann->channel_lock);
 			}
 		}
@@ -859,22 +741,17 @@ int data_rxaux_function(ps_pcie_dma_chann_desc_t *data)
 		{
 			chann->bds_alloc++;
 			//	rx_auxchannel_num_empty_bds[chann->chann_id]--;
-			//spin_unlock_irqrestore(&chann->channel_lock, flags);
 			spin_unlock_bh(&chann->channel_lock);
 		}
 
-
-
 	}
-
-
 
 	return 0;
 }
 
 
-	static int
-xraw_dev_open (struct inode *in, struct file *filp)
+	
+static int xraw_dev_open (struct inode *in, struct file *filp)
 {
 	/* Allowing more than one Application accesing the driver */
 
@@ -885,9 +762,7 @@ xraw_dev_open (struct inode *in, struct file *filp)
 	return 0;
 }
 
-
-	static int
-xraw_dev_release (struct inode *in, struct file *filp)
+static int xraw_dev_release (struct inode *in, struct file *filp)
 {
 
 
@@ -905,9 +780,7 @@ xraw_dev_release (struct inode *in, struct file *filp)
 	return 0;
 }
 
-
-	static long
-xraw_dev_ioctl (struct file *filp,
+static long xraw_dev_ioctl (struct file *filp,
 		unsigned int cmd, unsigned long arg)
 {
 	int retval = 0;
@@ -951,7 +824,6 @@ xraw_dev_ioctl (struct file *filp,
 
 			if (RawTestMode & TEST_START)
 			{
-
 
 				if (RawTestMode & ENABLE_PKTCHK)
 				{
@@ -1013,7 +885,6 @@ xraw_dev_ioctl (struct file *filp,
 					WR_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_CHK,reg_val);	
 
 				}
-
 
 #if 0	  
 				if (RawTestMode & ENABLE_PKTGEN)
@@ -1118,13 +989,10 @@ xraw_dev_write (struct file *file,
 {
 	int ret_pack=0;
 
-
-
 	//    if ((RawTestMode & TEST_START) &&
 	//	  (RawTestMode & ENABLE_PKTCHK ))
 
 	ret_pack = DmaSetupTransmit( 1, buffer, length);
-
 
 	/* 
 	 *  return the number of bytes sent , currently one or none
@@ -1134,8 +1002,7 @@ xraw_dev_write (struct file *file,
 
 
 
-	static ssize_t
-xraw_dev_read (struct file *file,
+static ssize_t xraw_dev_read (struct file *file,
 		char __user * buffer, size_t length, loff_t * offset)
 {
 	int ret_pack=0;
@@ -1169,9 +1036,7 @@ int data_txaux_function(ps_pcie_dma_chann_desc_t *data)
 
 	for(i=0;i< (NUM_Q_ELEM-2) ;i++)
 	{
-		//spin_lock_irqsave(&chann->channel_lock, flags);
 		spin_lock_bh(&chann->channel_lock);
-
 
 		retval = xlnx_data_frag_io(chann,(char *)GEN_CHK_BUF_ADDR,EP_PHYS_ADDR,
 				FRAG_SZ,cbk_data_txaux ,1, true, /*OUT,*/ (void*)current);
@@ -1181,12 +1046,10 @@ int data_txaux_function(ps_pcie_dma_chann_desc_t *data)
 			{
 				  
 				printk(KERN_ERR"\n Rx BDs saturated \n");
-				//spin_unlock_irqrestore(&chann->channel_lock, flags);
 				spin_unlock_bh(&chann->channel_lock);
 			}
 			else
 			{
-				//spin_unlock_irqrestore(&chann->channel_lock, flags);
 				spin_unlock_bh(&chann->channel_lock);
 			}
 		}
@@ -1194,14 +1057,11 @@ int data_txaux_function(ps_pcie_dma_chann_desc_t *data)
 		{
 			chann->bds_alloc++;
 			tx_auxchannel_num_empty_bds[chann->chann_id]--;
-			//spin_unlock_irqrestore(&chann->channel_lock, flags);
 			spin_unlock_bh(&chann->channel_lock);
 		}
 
 
 	}
-
-
 	return 0;
 }
 
@@ -1221,8 +1081,6 @@ int rx_driver_init(void)
 	}
 	else
 	{
-
-
 		int ret = 0;
 		unsigned int q_num_elements = NUM_Q_ELEM;
 		unsigned int data_q_addr_hi;
@@ -1253,7 +1111,7 @@ int rx_driver_init(void)
 
 		ret = xlnx_activate_dma_channel(ptr_rxapp_dma_desc, ptr_rxchan_s2c,
 				data_q_addr_hi,data_q_addr_lo,q_num_elements,
-				sta_q_addr_hi,sta_q_addr_lo,q_num_elements, 0);
+				sta_q_addr_hi,sta_q_addr_lo,q_num_elements, COALESE_CNT);
 		if(ret < XLNX_SUCCESS) 
 		{
 			printk(KERN_ERR"\n Could not activate s2c returned %d\n", ret);
@@ -1308,15 +1166,12 @@ int rx_driver_init(void)
 
 		ret = xlnx_activate_dma_channel(ptr_rxauxapp_dma_desc, ptr_rxauxchan_s2c,
 				data_q_addr_hi,data_q_addr_lo,q_num_elements,
-				sta_q_addr_hi,sta_q_addr_lo,q_num_elements, 0);
+				sta_q_addr_hi,sta_q_addr_lo,q_num_elements, COALESE_CNT);
 		if(ret < XLNX_SUCCESS) 
 		{
 			printk(KERN_ERR"\n Could not activate s2c returned %d \n", ret);
 			goto channel_act_failed;
 		}
-		
-
-
 	}
 	}
 
@@ -1447,7 +1302,7 @@ int host_pump_driver_init(void)
 
 			ret = xlnx_activate_dma_channel(ptr_TxAuxapp_dma_desc, ptr_Auxchan_s2c,
 					data_q_addr_hi,data_q_addr_lo,q_num_elements,
-					sta_q_addr_hi,sta_q_addr_lo,q_num_elements, 0);
+					sta_q_addr_hi,sta_q_addr_lo,q_num_elements, COALESE_CNT);
 			if(ret < XLNX_SUCCESS) 
 			{
 				printk(KERN_ERR"\n Could not activate s2c returned %d\n",ret);
@@ -1455,31 +1310,19 @@ int host_pump_driver_init(void)
 			}
 			else
 			{
-				
 				ret = data_txaux_function(ptr_Auxchan_s2c );
 				if(ret <0)
 					printk("Failed to Run Tx Aux Function ");
 			}
-
-
 		}
-
-
-
-
-
 	}
-
 	retval= rx_driver_init();
 	if(retval < XLNX_SUCCESS) 
 	{
 		printk(KERN_ERR"\n Could not activate Rx Channel  returned %d\n",retval);
 		goto channel_act_failed;
 	}
-
 	printk(KERN_ERR"\n Module Host pump on all 4 channels loaded %d", retval);
-
-
 
 	/* First allocate a major/minor number. */
 	chrRet = alloc_chrdev_region (&xrawDev, 0, 1, DEV_NAME);
