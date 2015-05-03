@@ -66,7 +66,7 @@
 
 
 
-#define COALESE_CNT (8)
+#define COALESE_CNT (32)
 
 
 
@@ -85,7 +85,7 @@
 
 //#define HOST_APP //A simple loopback application on EP for Raw data
 //#define USE_MSIX /* Use MSIX interrupt vector associated with each channel */
-//#define NUM_MSIX_VECS (PS_PCIE_NUM_DMA_CHANNELS)/* Number of MSIx vectors */
+#define NUM_MSIX_VECS (PS_PCIE_NUM_DMA_CHANNELS)/* Number of MSIx vectors */
 
 
 
