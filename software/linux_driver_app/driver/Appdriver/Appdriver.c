@@ -824,6 +824,7 @@ static long xraw_dev_ioctl (struct file *filp,
 
 			if (RawTestMode & TEST_START)
 			{
+#ifndef DDR_DESIGN
 
 				if (RawTestMode & ENABLE_PKTCHK)
 				{
@@ -842,9 +843,10 @@ static long xraw_dev_ioctl (struct file *filp,
 					WR_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_CHK,reg_val);
 					printk("CHECKER Enabled \n");
 				}
+#endif
 				if (RawTestMode & ENABLE_PKTGEN)
 				{
-
+#ifndef DDR_DESIGN 
 					reg_val =RD_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_GEN);
 					reg_val &= ~( GENCHK_ENABLE);
 					WR_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_GEN,reg_val);	
@@ -862,8 +864,9 @@ static long xraw_dev_ioctl (struct file *filp,
 					reg_val = RD_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_GEN);
 					reg_val |= GENCHK_ENABLE;
 					WR_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_GEN,reg_val);
-
 					printk("GENERATOR Enabled Packet length %d \n ",RD_DMA_REG(gen_chk_reg_vbaseaddr,PKT_LENGTH));
+
+#endif
 					data_rxaux_function(ptr_rxauxchan_s2c);
 
 				}
@@ -873,6 +876,7 @@ static long xraw_dev_ioctl (struct file *filp,
 			}
 			else
 			{
+#ifndef DDR_DESIGN
 				/* Deliberately not clearing the loopback bit, incase a
 				 * loopback test was going on - allows the loopback path
 				 * to drain off packets. Just stopping the source of packets.
@@ -881,12 +885,11 @@ static long xraw_dev_ioctl (struct file *filp,
 				{
 					reg_val =RD_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_CHK);
 					reg_val &= ~( GENCHK_ENABLE);
-					printk("CHECKER Disable  \n");	
+					printk("CHECKER Disabled  \n");	
 					WR_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_CHK,reg_val);	
 
 				}
 
-#if 0	  
 				if (RawTestMode & ENABLE_PKTGEN)
 				{
 					reg_val =RD_DMA_REG(gen_chk_reg_vbaseaddr,ENABLE_GEN);
